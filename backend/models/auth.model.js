@@ -15,7 +15,7 @@ async function findUserById(id) {
   const [rows] = await db.query(
     `SELECT user_id,name,email,role,created_at
      FROM users
-     WHERE user_id=?`,
+     WHERE user_id = ?`,
     [id]
   );
 

@@ -1,101 +1,60 @@
-const API_BASE_URL = "http://localhost:3000/api";
+const API_URL = "http://localhost:3000/api";
 
-// Get
-async function get(endpoint) {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Request failed");
+function getHeaders() {
+
+    const token = sessionStorage.getItem("token");
+
+    const headers = {
+        "Content-Type": "application/json"
+    };
+
+    if (token) {
+        headers.Authorization = `Bearer ${token}`;
     }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+
+    return headers;
+
 }
-// Post
-async function post(endpoint, data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+
+async function request(endpoint, options = {}) {
+
+    const response = await fetch(API_URL + endpoint, {
+        headers: getHeaders(),
+        ...options
     });
+
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
-throw new Error(errorData.message || "Request failed");
+        throw new Error(data.message);
     }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
+
+    return data;
+
 }
 
-// Put
-async function put(endpoint, data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+export const get = (url) =>
+    request(url);
+
+export const post = (url, body) =>
+    request(url, {
+        method: "POST",
+        body: JSON.stringify(body)
     });
-    if (!response.ok) {
-      const errorData = await response.json();
 
-throw new Error(errorData.message || "Request failed");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-// Patch
-
-async function patch(endpoint, data) {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+export const put = (url, body) =>
+    request(url, {
+        method: "PUT",
+        body: JSON.stringify(body)
     });
-    if (!response.ok) {
-      const errorData = await response.json();
 
-throw new Error(errorData.message || "Request failed");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-// Delete
-
-async function remove(endpoint) {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: "DELETE",
+export const patch = (url, body) =>
+    request(url, {
+        method: "PATCH",
+        body: JSON.stringify(body)
     });
-    if (!response.ok) {
-      const errorData = await response.json();
 
-throw new Error(errorData.message || "Request failed");
-    }
-    return await response.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-}
-
-export { get, post, put, patch, remove };
+export const remove = (url) =>
+    request(url, {
+        method: "DELETE"
+    });

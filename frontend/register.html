@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="EZLearn — Create your account" />
+    <meta name="theme-color" content="#0A0E1A" />
+
+    <title>EZLearn — Create Account</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Auth Styles -->
+    <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body class="auth-body">
+
+    <!-- ===== BACKGROUND ORBS ===== -->
+    <div class="auth-bg-orb auth-bg-orb--1"></div>
+    <div class="auth-bg-orb auth-bg-orb--2"></div>
+    <div class="auth-bg-orb auth-bg-orb--3"></div>
+
+    <!-- ===== REGISTER CONTAINER ===== -->
+    <div class="auth-container">
+        <div class="auth-card">
+
+            <!-- Logo -->
+            <div class="auth-logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect x="3" y="3" width="34" height="34" rx="8" stroke="#8B5CF6" stroke-width="2.5"/>
+                    <path d="M20 11L20 29M11 20L29 20" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="20" cy="20" r="4" stroke="#06B6D4" stroke-width="2"/>
+                    <circle cx="20" cy="20" r="2" fill="#06B6D4"/>
+                </svg>
+                <span class="auth-logo__text">EZLearn</span>
+            </div>
+
+            <!-- Header -->
+            <div class="auth-header">
+                <h1 class="auth-header__title">Create Account</h1>
+                <p class="auth-header__subtitle">Start your learning journey today</p>
+            </div>
+
+            <!-- ===== REGISTER FORM ===== -->
+            <form class="auth-form" id="registerForm" novalidate>
+
+                <!-- Name Field -->
+                <div class="auth-form-group">
+                    <label for="name" class="auth-form-label">
+                        <i class="fas fa-user"></i>
+                        Full Name
+                    </label>
+                    <div class="auth-input-wrapper">
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            class="auth-input"
+                            placeholder="John Doe"
+                            required
+                            autocomplete="name"
+                        />
+                        <span class="auth-input-icon">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
+                    <span class="auth-error" id="nameError">Please enter your full name</span>
+                </div>
+
+                <!-- Email Field -->
+                <div class="auth-form-group">
+                    <label for="email" class="auth-form-label">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <div class="auth-input-wrapper">
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="auth-input"
+                            placeholder="you@example.com"
+                            required
+                            autocomplete="email"
+                        />
+                        <span class="auth-input-icon">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                    </div>
+                    <span class="auth-error" id="emailError">Please enter a valid email</span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="auth-form-group">
+                    <label for="password" class="auth-form-label">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <div class="auth-input-wrapper">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="auth-input"
+                            placeholder="Create a password"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        />
+                        <button
+                            type="button"
+                            class="auth-password-toggle"
+                            id="passwordToggle"
+                            aria-label="Toggle password visibility"
+                        >
+                            <i class="fas fa-eye" id="passwordIcon"></i>
+                        </button>
+                    </div>
+                    <span class="auth-error" id="passwordError">Password must be at least 6 characters</span>
+                </div>
+
+                <!-- Confirm Password Field -->
+                <div class="auth-form-group">
+                    <label for="confirmPassword" class="auth-form-label">
+                        <i class="fas fa-check-circle"></i>
+                        Confirm Password
+                    </label>
+                    <div class="auth-input-wrapper">
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            class="auth-input"
+                            placeholder="Confirm your password"
+                            required
+                            minlength="6"
+                            autocomplete="new-password"
+                        />
+                        <span class="auth-input-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </span>
+                    </div>
+                    <span class="auth-error" id="confirmError">Passwords do not match</span>
+                </div>
+
+                <!-- Terms -->
+                <div class="auth-form-group auth-form-group--inline">
+                    <label class="auth-checkbox">
+                        <input type="checkbox" id="termsCheck" />
+                        <span class="auth-checkbox__mark"></span>
+                        I agree to the
+                        <a href="#" class="auth-link">Terms of Service</a>
+                        and
+                        <a href="#" class="auth-link">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="auth-btn auth-btn--primary auth-btn--full" id="registerBtn">
+                    <span id="registerBtnText">Create Account</span>
+                    <i class="fas fa-arrow-right" id="registerBtnIcon"></i>
+                </button>
+
+                <!-- Loading State -->
+                <div class="auth-loading" id="registerLoading">
+                    <div class="auth-spinner"></div>
+                    <span>Creating account...</span>
+                </div>
+
+            </form>
+            <p id="message"></p>
+            <!-- Divider -->
+            <div class="auth-divider">
+                <span>or continue with</span>
+            </div>
+
+            <!-- Sign In Link -->
+            <p class="auth-footer">
+                Already have an account?
+                <a href="login.html" class="auth-footer__link">Sign In</a>
+            </p>
+
+        </div>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script type="module" src="js/register.js"></script>
+</body>
+</html>

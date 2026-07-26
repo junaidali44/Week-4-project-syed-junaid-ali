@@ -36,7 +36,6 @@ async function register(req, res) {
       success: true,
       message: "User registered successfully.",
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -61,7 +60,7 @@ async function login(req, res) {
     const user = await authModel.findUserByEmail(email);
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(401).json({
         success: false,
         message: "Invalid email or password.",
       });
@@ -76,6 +75,8 @@ async function login(req, res) {
       });
     }
 
+    console.log("User From DB:", user);
+
     const token = generateToken(user);
 
     res.status(200).json({
@@ -83,7 +84,7 @@ async function login(req, res) {
       message: "Login successful.",
       token,
       user: {
-        user_id: user.user_id,
+        id: user.user_id,
         name: user.name,
         email: user.email,
         role: user.role,
@@ -102,25 +103,26 @@ async function login(req, res) {
 
 async function profile(req, res) {
   try {
-    
+    console.log("Decoded Token:", req.user);
+
     const user = await authModel.findUserById(req.user.id);
 
     if (!user) {
       return res.status(404).json({
-        success:false,
-        message:"User not found."
+        success: false,
+        message: "User not found.",
       });
     }
 
     res.status(200).json({
-      success:true,
-      data:user
+      success: true,
+      data: user,
     });
 
   } catch (error) {
     res.status(500).json({
-      success:false,
-      message:error.message
+      success: false,
+      message: error.message,
     });
   }
 }

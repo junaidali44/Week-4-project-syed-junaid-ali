@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="EZLearn — Login to continue learning" />
+    <meta name="theme-color" content="#0A0E1A" />
+
+    <title>EZLearn — Login</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Auth Styles -->
+    <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body class="auth-body">
+
+    <!-- ===== BACKGROUND ORBS ===== -->
+    <div class="auth-bg-orb auth-bg-orb--1"></div>
+    <div class="auth-bg-orb auth-bg-orb--2"></div>
+    <div class="auth-bg-orb auth-bg-orb--3"></div>
+
+    <!-- ===== LOGIN CONTAINER ===== -->
+    <div class="auth-container">
+        <div class="auth-card">
+
+            <!-- Logo -->
+            <div class="auth-logo">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect x="3" y="3" width="34" height="34" rx="8" stroke="#8B5CF6" stroke-width="2.5"/>
+                    <path d="M20 11L20 29M11 20L29 20" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="20" cy="20" r="4" stroke="#06B6D4" stroke-width="2"/>
+                    <circle cx="20" cy="20" r="2" fill="#06B6D4"/>
+                </svg>
+                <span class="auth-logo__text">EZLearn</span>
+            </div>
+
+            <!-- Header -->
+            <div class="auth-header">
+                <h1 class="auth-header__title">Welcome Back</h1>
+                <p class="auth-header__subtitle">Login to continue your learning journey</p>
+            </div>
+
+            <!-- ===== LOGIN FORM ===== -->
+            <form class="auth-form" id="loginForm" novalidate>
+
+                <!-- Email Field -->
+                <div class="auth-form-group">
+                    <label for="email" class="auth-form-label">
+                        <i class="fas fa-envelope"></i>
+                        Email Address
+                    </label>
+                    <div class="auth-input-wrapper">
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="auth-input"
+                            placeholder="you@example.com"
+                            required
+                            autocomplete="email"
+                        />
+                        <span class="auth-input-icon">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                    </div>
+                    <span class="auth-error" id="emailError">Please enter a valid email</span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="auth-form-group">
+                    <label for="password" class="auth-form-label">
+                        <i class="fas fa-lock"></i>
+                        Password
+                    </label>
+                    <div class="auth-input-wrapper">
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="auth-input"
+                            placeholder="Enter your password"
+                            required
+                            minlength="6"
+                            autocomplete="current-password"
+                        />
+                        <button
+                            type="button"
+                            class="auth-password-toggle"
+                            id="passwordToggle"
+                            aria-label="Toggle password visibility"
+                        >
+                            <i class="fas fa-eye" id="passwordIcon"></i>
+                        </button>
+                    </div>
+                    <span class="auth-error" id="passwordError">Password must be at least 6 characters</span>
+                </div>
+
+                <!-- Options -->
+                <div class="auth-options">
+                    <label class="auth-checkbox">
+                        <input type="checkbox" id="rememberMe" />
+                        <span class="auth-checkbox__mark"></span>
+                        Remember me
+                    </label>
+                    <a href="#" class="auth-link">Forgot password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="auth-btn auth-btn--primary auth-btn--full" id="loginBtn">
+                    <span id="loginBtnText">Sign In</span>
+                    <i class="fas fa-arrow-right" id="loginBtnIcon"></i>
+                </button>
+
+                <!-- Loading State -->
+                <div class="auth-loading" id="loginLoading">
+                    <div class="auth-spinner"></div>
+                    <span>Signing in...</span>
+                </div>
+
+            </form>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+                <span>or</span>
+            </div>
+
+            <!-- Social Login -->
+           
+
+<p id="message"></p>
+            <!-- Sign Up Link -->
+            <p class="auth-footer">
+                Don't have an account?
+                <a href="register.html" class="auth-footer__link">Sign Up</a>
+            </p>
+
+        </div>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script type="module" src="js/login.js"></script>
+</body>
+</html>
