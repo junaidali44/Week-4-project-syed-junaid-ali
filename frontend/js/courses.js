@@ -9,8 +9,11 @@ try {
   const response = await getCourses();
   courses = response.data;
   renderAllCourses();
+  if(courses.lenght===0){
+    showError(container, "Courses not found");
+  }
 } catch (error) {
-  showError(container, error.message);
+  showError(container, "Failed to connect with server");
 }
 
 function renderAllCourses() {
@@ -39,4 +42,3 @@ function renderAllCourses() {
                         </div>
                     `;
 }
-renderAllCourses();

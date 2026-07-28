@@ -1,38 +1,7 @@
-import { register } from "./services/authService.js";
+// ========================================
+// EZLearn — Shared Auth Logic (Login + Register)
+// ========================================
 
-const form = document.getElementById("registerForm");
-const message = document.getElementById("message");
-
-// form.addEventListener("submit", async (e) => {
-
-//     e.preventDefault();
-
-//     message.textContent = "";
-//     try {
-
-//         const response = await register({
-//             name: form.name.value.trim(),
-//             email: form.email.value.trim(),
-//             password: form.password.value.trim()
-//         });
-
-//         message.style.color = "green";
-//         message.textContent = response.message;
-
-//         form.reset();
-
-//         setTimeout(() => {
-//             window.location.href = "login.html";
-//         }, 1000);
-
-//     } catch (err) {
-
-//         message.style.color = "red";
-//         message.textContent = err.message;
-
-//     }
-
-// });
 document.addEventListener('DOMContentLoaded', function() {
 
     // ===== Detect which page we're on =====
@@ -52,6 +21,97 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // ======================================== */
+    // LOGIN LOGIC                             */
+    // ======================================== */
+    if (isLogin) {
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const passwordInputLogin = document.getElementById('password');
+        const emailError = document.getElementById('emailError');
+        const passwordError = document.getElementById('passwordError');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginBtnText = document.getElementById('loginBtnText');
+        const loginBtnIcon = document.getElementById('loginBtnIcon');
+        const loginLoading = document.getElementById('loginLoading');
+        const rememberMe = document.getElementById('rememberMe');
+
+        // Real-time validation
+        emailInput.addEventListener('blur', function() { validateLoginEmail(); });
+        emailInput.addEventListener('input', function() { if (this.value.length > 0) validateLoginEmail(); });
+        passwordInputLogin.addEventListener('blur', function() { validateLoginPassword(); });
+        passwordInputLogin.addEventListener('input', function() { if (this.value.length > 0) validateLoginPassword(); });
+
+        function validateLoginEmail() {
+            const email = emailInput.value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (email === '') {
+                emailInput.classList.remove('auth-input--error', 'auth-input--success');
+                emailError.classList.remove('auth-error--visible');
+                return false;
+            }
+
+            if (!emailRegex.test(email)) {
+                emailInput.classList.add('auth-input--error');
+                emailInput.classList.remove('auth-input--success');
+                emailError.classList.add('auth-error--visible');
+                return false;
+            }
+
+            emailInput.classList.remove('auth-input--error');
+            emailInput.classList.add('auth-input--success');
+            emailError.classList.remove('auth-error--visible');
+            return true;
+        }
+
+        function validateLoginPassword() {
+            const password = passwordInputLogin.value;
+
+            if (password === '') {
+                passwordInputLogin.classList.remove('auth-input--error', 'auth-input--success');
+                passwordError.classList.remove('auth-error--visible');
+                return false;
+            }
+
+            if (password.length < 6) {
+                passwordInputLogin.classList.add('auth-input--error');
+                passwordInputLogin.classList.remove('auth-input--success');
+                passwordError.classList.add('auth-error--visible');
+                return false;
+            }
+
+            passwordInputLogin.classList.remove('auth-input--error');
+            passwordInputLogin.classList.add('auth-input--success');
+            passwordError.classList.remove('auth-error--visible');
+            return true;
+        }
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const isEmailValid = validateLoginEmail();
+            const isPasswordValid = validateLoginPassword();
+
+            if (!isEmailValid || !isPasswordValid) {
+                if (!isEmailValid) emailInput.focus();
+                else if (!isPasswordValid) passwordInputLogin.focus();
+                return;
+            }
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtnText.textContent = 'Signing In...';
+            loginBtnIcon.className = 'fas fa-spinner fa-spin';
+            loginLoading.style.display = 'flex';
+
+            // Simulate API call
+            // setTimeout(function() {
+            //     sessionStorage.setItem('isLoggedIn', 'true');
+            //     window.location.href = 'dashboard.html';
+            // }, 1500);
+        });
+    }
 
     // ======================================== */
     // REGISTER LOGIC                          */
@@ -195,33 +255,10 @@ document.addEventListener('DOMContentLoaded', function() {
             registerLoading.style.display = 'flex';
 
             // Simulate API call
-            setTimeout(async function() {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                window.location.href = 'index.html';
-                try {
-
-        const response = await register({
-            name: form.name.value.trim(),
-            email: form.email.value.trim(),
-            password: form.password.value.trim()
-        });
-
-        message.style.color = "green";
-        message.textContent = response.message;
-
-        form.reset();
-
-        setTimeout(() => {
-            window.location.href = "login.html";
-        }, 1000);
-
-    } catch (err) {
-
-        message.style.color = "red";
-        message.textContent = err.message;
-
-    }
-            }, 1500);
+            // setTimeout(function() {
+            //     sessionStorage.setItem('isLoggedIn', 'true');
+            //     window.location.href = 'dashboard.html';
+            // }, 1500);
         });
     }
 

@@ -1,4 +1,28 @@
 import { heroTechData, techStack, testimonialsData } from "./data.js";
+import { isLoggedIn, logout } from "./utils/auth.js";
+
+const authLink = document.getElementsByClassName("auth-link");
+const logoutBtn = document.getElementById("logoutBtn");
+const registerBtn = document.getElementById("registerBtn");
+const loginBtn = document.getElementById("loginBtn");
+const profileBtn = document.getElementById("profileBtn");
+
+logoutBtn.addEventListener("click",() => {
+  setTimeout(() => {
+    logout();
+  }, 1000);
+});
+document.addEventListener('DOMContentLoaded',() => {
+  if(isLoggedIn()){
+    registerBtn.style.display = "none";
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "block";
+    profileBtn.style.display = "block";
+  }if(!isLoggedIn()){
+    profileBtn.style.display="none";
+    logoutBtn.style.display="none";
+  }
+});
 function renderHeroTechStrip() {
   const strip = document.getElementById("heroTechStrip");
   strip.innerHTML = heroTechData
@@ -157,52 +181,51 @@ let searchResultsList = document.getElementById("searchResultsList");
 let searchResultsArea = document.getElementById("searchResults");
 
 search.addEventListener("input", (e) => {
-    let value = e.target.value.toLowerCase().trim();
-    
-    if (value === '') {
-       
-        searchResultsArea.style.display = "block";
-        let html = '';
-        techStack.forEach((tech) => {
-            html += `<li><a href="courses.html?course=${tech.id}">${tech.name}</a></li>`;
-        });
-        searchResultsList.innerHTML = html;
-        return;
-    }
-    
-    let matches = techStack.filter((tech) =>
-        tech.name.toLowerCase().includes(value)
-    );
-    
+  let value = e.target.value.toLowerCase().trim();
+
+  if (value === "") {
     searchResultsArea.style.display = "block";
-    
-    if (matches.length === 0) {
-        searchResultsList.innerHTML = `<li class="no-result">No Result Found for: <strong>${value}</strong></li>`;
-    } else {
-        let html = '';
-        matches.forEach((tech) => {
-            html += `<li><a href="courses.html?course=${tech.id}">${tech.name}</a></li>`;
-        });
-        searchResultsList.innerHTML = html;
-    }
-});
-search.addEventListener("click", (e) => {
-    e.stopPropagation(); 
-    searchResultsArea.style.display = "block";
-    let html = '';
+    let html = "";
     techStack.forEach((tech) => {
-        html += `<li><a href="courses.html?course=${tech.id}">${tech.name}</a></li>`;
+      html += `<li><a href="courses.html?course=${tech.id}">${tech.name}</a></li>`;
     });
     searchResultsList.innerHTML = html;
-    console.log('All results shown:', techStack.length);
+    return;
+  }
+
+  let matches = techStack.filter((tech) =>
+    tech.name.toLowerCase().includes(value),
+  );
+
+  searchResultsArea.style.display = "block";
+
+  if (matches.length === 0) {
+    searchResultsList.innerHTML = `<li class="no-result">No Result Found for: <strong>${value}</strong></li>`;
+  } else {
+    let html = "";
+    matches.forEach((tech) => {
+      html += `<li><a href="courses.html?course=${tech.id}">${tech.name}</a></li>`;
+    });
+    searchResultsList.innerHTML = html;
+  }
+});
+search.addEventListener("click", (e) => {
+  e.stopPropagation();
+  searchResultsArea.style.display = "block";
+  let html = "";
+  techStack.forEach((tech) => {
+    html += `<li><a href="courses.html?course=${tech.id}">${tech.name}</a></li>`;
+  });
+  searchResultsList.innerHTML = html;
+  console.log("All results shown:", techStack.length);
 });
 
 document.addEventListener("click", (e) => {
-    const container = document.querySelector('.search-container-wrapper');
-    if (container && !container.contains(e.target)) {
-        searchResultsArea.style.display = "none";
-    }
+  const container = document.querySelector(".search-container-wrapper");
+  if (container && !container.contains(e.target)) {
+    searchResultsArea.style.display = "none";
+  }
 });
 searchResultsArea.addEventListener("click", (e) => {
-    e.stopPropagation();
+  e.stopPropagation();
 });

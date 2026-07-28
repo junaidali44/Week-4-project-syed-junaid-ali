@@ -1,7 +1,8 @@
+import { showError } from "../components/ui.mjs";
+
 const API_URL = "http://localhost:3000/api";
 
 function getHeaders() {
-
     const token = sessionStorage.getItem("token");
 
     const headers = {
@@ -13,28 +14,45 @@ function getHeaders() {
     }
 
     return headers;
-
 }
 
 async function request(endpoint, options = {}) {
+    try {
+        const response = await fetch(`${API_URL}${endpoint}`, {
+            ...options,
+            headers: {
+                ...getHeaders(),
+                ...(options.headers || {})
+            }
+        });
 
-    const response = await fetch(API_URL + endpoint, {
-        headers: getHeaders(),
-        ...options
-    });
+        const contentType = response.headers.get("content-type") || "";
 
-    const data = await response.json();
+        const data = contentType.includes("application/json")
+            ? await response.json()
+            : null;
 
-    if (!response.ok) {
-        throw new Error(data.message);
+        if (!response.ok) {
+            const message =
+                data?.message ||
+                `Request failed with status ${response.status}`;
+
+            throw new Error(message);
+        }
+
+        return data;
+    } catch (error) {
+        console.error(`API request failed: ${endpoint}`, error);
+
+        if (typeof showError === "function") {
+            showError(error.message);
+        }
+
+        throw error;
     }
-
-    return data;
-
 }
 
-export const get = (url) =>
-    request(url);
+export const get = (url) => request(url);
 
 export const post = (url, body) =>
     request(url, {

@@ -257,6 +257,133 @@ body.dark .nav {
     transition: all var(--duration-fast) var(--ease-out);
 }
 
+.auth-link-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto !important;
+}
+
+.auth-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: var(--radius-full);
+    font-family: var(--font-display);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all var(--duration-fast) var(--ease-out);
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--color-text-secondary);
+    position: relative;
+}
+
+/* ===== Register Link ===== */
+.auth-link.register {
+    background: transparent;
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+}
+
+.auth-link.register:hover {
+    background: var(--color-surface-hover);
+    border-color: var(--color-border-focus);
+    color: var(--color-text-primary);
+    transform: translateY(-2px);
+}
+/*===== Login Link (Primary) ===== */
+.auth-link.login {
+    background: var(--color-primary);
+    color: white;
+    border: 1px solid transparent;
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
+}
+
+.auth-link.login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px var(--color-primary-glow);
+}
+
+.auth-link.login * {
+    position: relative;
+    z-index: 1;
+}
+
+.auth-link.login:hover::before {
+    opacity: 1;
+}
+
+/* ===== Logout Button ===== */
+.auth-link.logout {
+    background: transparent;
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.auth-link.logout:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #F87171;
+    transform: translateY(-2px);
+}
+
+.auth-link i {
+    font-size: 0.8125rem;
+}
+/* Mobile */
+@media (max-width: 600px) {
+    .auth-link-container {
+        gap: 4px;
+    }
+
+    .auth-link {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+
+    .auth-link i {
+        display: none;
+    }
+
+    .auth-link.register {
+        padding: 6px 10px;
+    }
+
+    .auth-link.login {
+        padding: 6px 14px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .auth-link {
+        padding: 8px 16px;
+        font-size: 0.8125rem;
+    }
+}
+
+/* ======================================== */
+/* REDUCED MOTION                          */
+/* ======================================== */
+@media (prefers-reduced-motion: reduce) {
+    .auth-link {
+        transition: none !important;
+    }
+
+    .auth-link.login::before {
+        display: none;
+    }
+
+    .auth-link.login:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+}
 .nav-theme-btn:hover,
 .nav-menu-btn:hover {
     background: var(--color-surface-hover);
