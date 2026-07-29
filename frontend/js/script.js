@@ -3,8 +3,8 @@ import { isLoggedIn, logout } from "./utils/auth.js";
 
 const authLink = document.getElementsByClassName("auth-link");
 const logoutBtn = document.getElementById("logoutBtn");
-const registerBtn = document.getElementById("registerBtn");
-const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("register");
+const loginBtn = document.getElementById("login");
 const profileBtn = document.getElementById("profileBtn");
 
 logoutBtn.addEventListener("click",() => {
@@ -14,6 +14,8 @@ logoutBtn.addEventListener("click",() => {
 });
 document.addEventListener('DOMContentLoaded',() => {
   if(isLoggedIn()){
+    console.log("Login !");
+    
     registerBtn.style.display = "none";
     loginBtn.style.display = "none";
     logoutBtn.style.display = "block";

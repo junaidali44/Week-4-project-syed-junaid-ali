@@ -75,8 +75,6 @@ async function login(req, res) {
       });
     }
 
-    console.log("User From DB:", user);
-
     const token = generateToken(user);
 
     res.status(200).json({
@@ -103,7 +101,7 @@ async function login(req, res) {
 
 async function profile(req, res) {
   try {
-    console.log("Decoded Token:", req.user);
+    // console.log("Decoded Token:", req.user);
 
     const user = await authModel.findUserById(req.user.id);
 
