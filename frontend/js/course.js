@@ -1,5 +1,5 @@
 import { getCourse } from "./services/courseService.js";
-import { showLoading, showError } from "./componets/ui.js";
+import { showLoading, showError } from "./components/ui.mjs";
 
 const container = document.getElementById("courseContent");
 showLoading(container);

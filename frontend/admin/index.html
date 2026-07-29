@@ -3,17 +3,32 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0A0E1A" />
     <title>EZLearn — Admin Dashboard</title>
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="css/admin.css" />
+<link rel="stylesheet" href="css/dashboard.css">
 </head>
+
 <body>
 
+    <!-- ===== Toast Container ===== -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- ===== SIDEBAR ===== -->
-    <aside class="sidebar">
+    <!-- ===== Sidebar Overlay ===== -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- ===== Mobile Hamburger ===== -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- ======================================== -->
+    <!-- SIDEBAR                                  -->
+    <!-- ======================================== -->
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar__logo">
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
                 <rect x="3" y="3" width="34" height="34" rx="8" stroke="#8B5CF6" stroke-width="2.5"/>
@@ -23,163 +38,285 @@
             </svg>
             <span class="sidebar__logo-text">EZLearn</span>
         </div>
+
         <nav class="sidebar__nav">
-            <a href="index.html" class="sidebar__link sidebar__link--active"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
-            <a href="courses.html" class="sidebar__link"><i class="fas fa-book-open"></i><span>Courses</span></a>
-            <a href="topics.html" class="sidebar__link"><i class="fas fa-list"></i><span>Topics</span></a>
-            <a href="lessons.html" class="sidebar__link"><i class="fas fa-file-alt"></i><span>Lessons</span></a>
-            <a href="users.html" class="sidebar__link"><i class="fas fa-users"></i><span>Users</span></a>
-            <a href="feedbacks.html" class="sidebar__link"><i class="fas fa-comment-dots"></i><span>Feedbacks</span></a>
+            <a href="index.html" class="sidebar__link sidebar__link--active">
+                <i class="fas fa-chart-pie"></i><span>Dashboard</span>
+            </a>
+            <a href="courses.html" class="sidebar__link">
+                <i class="fas fa-book-open"></i><span>Courses</span>
+            </a>
+            <a href="topics.html" class="sidebar__link">
+                <i class="fas fa-layer-group"></i><span>Topics</span>
+            </a>
+            <a href="lessons.html" class="sidebar__link">
+                <i class="fas fa-file-alt"></i><span>Lessons</span>
+            </a>
+            <a href="users.html" class="sidebar__link">
+                <i class="fas fa-users"></i><span>Users</span>
+            </a>
+            <a href="feedbacks.html" class="sidebar__link">
+                <i class="fas fa-comment-dots"></i><span>Feedbacks</span>
+            </a>
         </nav>
+
         <div class="sidebar__footer">
-            <a href="../index.html" class="sidebar__link"><i class="fas fa-arrow-left"></i><span>Back to Site</span></a>
-            <a href="#" class="sidebar__link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            <a href="../index.html" class="sidebar__link">
+                <i class="fas fa-arrow-left"></i><span>Back to Site</span>
+            </a>
+            <button class="sidebar__link" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i><span>Logout</span>
+            </button>
         </div>
     </aside>
 
-    <!-- ===== MAIN ===== -->
-    <main class="main">
+    <!-- ======================================== -->
+    <!-- MAIN CONTENT                             -->
+    <!-- ======================================== -->
+    <main class="main-content">
 
-        <div class="page-header">
+        <!-- ===== Page Header ===== -->
+        <header class="page-header">
             <div class="page-header__left">
-                <h1>📊 Dashboard</h1>
-                <p>Overview of your EZLearn platform</p>
+                <h1 class="page-header__title">
+                    <i class="fas fa-chart-pie" style="color: var(--color-primary);"></i> Dashboard
+                </h1>
+                <p class="page-header__subtitle">Overview of your EZLearn platform</p>
             </div>
             <div class="page-header__right">
-                <a href="courses.html" class="btn btn--primary"><i class="fas fa-plus"></i> Add Course</a>
+                <a href="courses.html" class="btn btn--primary">
+                    <i class="fas fa-plus-circle"></i> Add Course
+                </a>
+                <button class="btn btn--glass" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </header>
+
+        <!-- ===== Stats Grid ===== -->
+        <section class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <span class="stat-card__icon"><i class="fas fa-book"></i></span>
+                <div class="stat-card__value" id="statCourses">0</div>
+                <div class="stat-card__label">Total Courses</div>
+                <div class="stat-card__trend stat-card__trend--up">
+                    <i class="fas fa-arrow-up"></i> 12% this month
+                </div>
+            </div>
+
+
+            <div class="stat-card">
+                <span class="stat-card__icon"><i class="fas fa-file-alt"></i></span>
+                <div class="stat-card__value" id="statLessons">0</div>
+                <div class="stat-card__label">Total Lessons</div>
+                <div class="stat-card__trend stat-card__trend--up">
+                    <i class="fas fa-arrow-up"></i> 15% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-card__icon"><i class="fas fa-users"></i></span>
+                <div class="stat-card__value" id="statUsers">0</div>
+                <div class="stat-card__label">Total Users</div>
+                <div class="stat-card__trend stat-card__trend--up">
+                    <i class="fas fa-arrow-up"></i> 23% this month
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <span class="stat-card__icon"><i class="fas fa-comment-dots"></i></span>
+                <div class="stat-card__value" id="statFeedbacks">0</div>
+                <div class="stat-card__label">Total Feedbacks</div>
+                <div class="stat-card__trend stat-card__trend--down">
+                    <i class="fas fa-arrow-down"></i> 3% this month
+                </div>
+            </div>
+        </section>
+
+        
+
+        <!-- ===== Two-Column Layout ===== -->
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div class="dashboard-grid__left">
+                <!-- Recent Users -->
+                <section class="card">
+                    <div class="card__header">
+                        <span class="card__title"><i class="fas fa-users" style="color: var(--color-primary);"></i> Recent Users</span>
+                        <a href="users.html" class="card__link">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-user"></i> Name</th>
+                                    <th><i class="fas fa-envelope"></i> Email</th>
+                                    <th><i class="fas fa-user-tag"></i> Role</th>
+                                    <th><i class="fas fa-calendar-alt"></i> Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentUsersTable">
+                                <tr>
+                                    <td><strong>John Doe</strong></td>
+                                    <td>john@example.com</td>
+                                    <td><span class="badge badge--primary">Admin</span></td>
+                                    <td>Jul 29, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sarah Smith</strong></td>
+                                    <td>sarah@example.com</td>
+                                    <td><span class="badge badge--info">User</span></td>
+                                    <td>Jul 28, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Mike Johnson</strong></td>
+                                    <td>mike@example.com</td>
+                                    <td><span class="badge badge--info">User</span></td>
+                                    <td>Jul 27, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Emily Davis</strong></td>
+                                    <td>emily@example.com</td>
+                                    <td><span class="badge badge--info">User</span></td>
+                                    <td>Jul 26, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Chris Wilson</strong></td>
+                                    <td>chris@example.com</td>
+                                    <td><span class="badge badge--info">User</span></td>
+                                    <td>Jul 25, 2026</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Recent Courses -->
+                <section class="card">
+                    <div class="card__header">
+                        <span class="card__title"><i class="fas fa-book-open" style="color: var(--color-primary);"></i> Recent Courses</span>
+                        <a href="courses.html" class="card__link">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-book"></i> Course Name</th>
+                                    <th><i class="fas fa-link"></i> Slug</th>
+                                    <th><i class="fas fa-calendar-alt"></i> Created</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentCoursesTable">
+                                <tr>
+                                    <td><strong>CSS Mastery</strong></td>
+                                    <td><code style="color:#94A3B8;font-size:0.75rem;">css-mastery</code></td>
+                                    <td>Jul 29, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>React Hooks</strong></td>
+                                    <td><code style="color:#94A3B8;font-size:0.75rem;">react-hooks</code></td>
+                                    <td>Jul 28, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>TypeScript</strong></td>
+                                    <td><code style="color:#94A3B8;font-size:0.75rem;">typescript</code></td>
+                                    <td>Jul 27, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Node.js</strong></td>
+                                    <td><code style="color:#94A3B8;font-size:0.75rem;">nodejs</code></td>
+                                    <td>Jul 26, 2026</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Python</strong></td>
+                                    <td><code style="color:#94A3B8;font-size:0.75rem;">python</code></td>
+                                    <td>Jul 25, 2026</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="dashboard-grid__right">
+                <section class="card">
+                    <div class="card__header">
+                        <span class="card__title"><i class="fas fa-chart-bar" style="color: var(--color-primary);"></i> Platform Overview</span>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-cubes"></i> Metric</th>
+                                    <th><i class="fas fa-hashtag"></i> Value</th>
+                                    <th><i class="fas fa-flag"></i> Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="overviewTable">
+                                <tr>
+                                    <td>Total Courses</td>
+                                    <td id="totalCoursesRow"><strong>12</strong></td>
+                                    <td><span class="badge badge--success"><i class="fas fa-check-circle"></i> Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Topics</td>
+                                    <td id="totalTopicsRow"><strong>48</strong></td>
+                                    <td><span class="badge badge--success"><i class="fas fa-check-circle"></i> Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Lessons</td>
+                                    <td id="totalLessonsRow"><strong>96</strong></td>
+                                    <td><span class="badge badge--success"><i class="fas fa-check-circle"></i> Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Users</td>
+                                    <td id="totalUsersRow"><strong>156</strong></td>
+                                    <td><span class="badge badge--success"><i class="fas fa-check-circle"></i> Active</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Feedbacks</td>
+                                    <td id="totalFeedbacksRow"><strong>42</strong></td>
+                                    <td><span class="badge badge--warning"><i class="fas fa-clock"></i> Pending Review</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </div>
-
-        <!-- ===== Stats ===== -->
-        <div class="stats" id="statsGrid">
-            <div class="stat">
-                <span class="stat__icon"><i class="fas fa-book"></i></span>
-                <div class="stat__value" id="statCourses">0</div>
-                <div class="stat__label">Courses</div>
-            </div>
-            <div class="stat">
-                <span class="stat__icon"><i class="fas fa-list"></i></span>
-                <div class="stat__value" id="statTopics">0</div>
-                <div class="stat__label">Topics</div>
-            </div>
-            <div class="stat">
-                <span class="stat__icon"><i class="fas fa-file-alt"></i></span>
-                <div class="stat__value" id="statLessons">0</div>
-                <div class="stat__label">Lessons</div>
-            </div>
-            <div class="stat">
-                <span class="stat__icon"><i class="fas fa-users"></i></span>
-                <div class="stat__value" id="statUsers">0</div>
-                <div class="stat__label">Users</div>
-            </div>
-            <div class="stat">
-                <span class="stat__icon"><i class="fas fa-comment"></i></span>
-                <div class="stat__value" id="statFeedbacks">0</div>
-                <div class="stat__label">Feedbacks</div>
-            </div>
-        </div>
-
-        <!-- ===== Quick Actions ===== -->
-        <div class="card">
+<section class="card glass">
             <div class="card__header">
-                <span class="card__title">⚡ Quick Actions</span>
+                <span class="card__title"><i class="fas fa-bolt" style="color: var(--color-primary);"></i> Quick Actions</span>
             </div>
-            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-                <a href="courses.html" class="btn btn--primary"><i class="fas fa-plus"></i> New Course</a>
-                <a href="topics.html" class="btn btn--secondary"><i class="fas fa-plus"></i> New Topic</a>
-                <a href="lessons.html" class="btn btn--secondary"><i class="fas fa-plus"></i> New Lesson</a>
-                <a href="users.html" class="btn btn--secondary"><i class="fas fa-users"></i> Manage Users</a>
-                <a href="feedbacks.html" class="btn btn--secondary"><i class="fas fa-comment"></i> View Feedbacks</a>
+            <div class="quick-actions">
+                <a href="courses.html" class="quick-action">
+                    <span class="quick-action__icon"><i class="fas fa-plus-circle"></i></span>
+                    <span class="quick-action__label">New Course</span>
+                </a>
+                <a href="topics.html" class="quick-action">
+                    <span class="quick-action__icon"><i class="fas fa-layer-group"></i></span>
+                    <span class="quick-action__label">New Topic</span>
+                </a>
+                <a href="lessons.html" class="quick-action">
+                    <span class="quick-action__icon"><i class="fas fa-file-alt"></i></span>
+                    <span class="quick-action__label">New Lesson</span>
+                </a>
+                <a href="users.html" class="quick-action">
+                    <span class="quick-action__icon"><i class="fas fa-users"></i></span>
+                    <span class="quick-action__label">Manage Users</span>
+                </a>
+                <a href="feedbacks.html" class="quick-action">
+                    <span class="quick-action__icon"><i class="fas fa-comment-dots"></i></span>
+                    <span class="quick-action__label">View Feedbacks</span>
+                </a>
             </div>
-        </div>
-
-        <!-- ===== Recent Activity ===== -->
-        <div class="card">
-            <div class="card__header">
-                <span class="card__title">📋 Platform Overview</span>
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead>
-                        <tr><th>Metric</th><th>Value</th><th>Status</th></tr>
-                    </thead>
-                    <tbody id="overviewTable">
-                        <tr><td>Total Content Items</td><td id="totalContent">0</td><td><span class="badge badge--success">Active</span></td></tr>
-                        <tr><td>Total Users</td><td id="totalUsersRow">0</td><td><span class="badge badge--success">Active</span></td></tr>
-                        <tr><td>Total Feedbacks</td><td id="totalFeedbacksRow">0</td><td><span class="badge badge--info">Pending Review</span></td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
+        </section>
     </main>
 
-    <!-- ===== SCRIPTS ===== -->
-    <script type="module">
-        import { showToast, showError } from '../js/components/ui.mjs';
-        import { getCourses } from '../js/services/courseService.js';
-        import { getUsers } from '../js/services/userService.js';
-        import { getFeedbacks } from '../js/services/feedbackService.js';
-        import { getTopics } from '../js/services/topicService.js';
-        import { getLessons } from '../js/services/lessonsService.js';
-
-        // ===== Check Auth =====
-        const token = sessionStorage.getItem('token');
-        if (!token) {
-            window.location.href = '../login.html';
-        }
-
-        // ===== Logout =====
-        document.getElementById('logoutBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                sessionStorage.removeItem('token');
-                sessionStorage.removeItem('user');
-                window.location.href = '../login.html';
-            }
-        });
-
-        // ===== Load Stats =====
-        async function loadStats() {
-            try {
-                const [courses, topics, lessons, users, feedbacks] = await Promise.all([
-                    getCourses().catch(() => ({ data: [] })),
-                    getTopics().catch(() => ({ data: [] })),
-                    getLessons().catch(() => ({ data: [] })),
-                    getUsers().catch(() => ({ data: [] })),
-                    getFeedbacks().catch(() => ({ data: [] }))
-                ]);
-
-                const courseCount = courses.data?.length || 0;
-                const topicCount = topics.data?.length || 0;
-                const lessonCount = lessons.data?.length || 0;
-                const userCount = users.data?.length || 0;
-                const feedbackCount = feedbacks.data?.length || 0;
-
-                document.getElementById('statCourses').textContent = courseCount;
-                document.getElementById('statTopics').textContent = topicCount;
-                document.getElementById('statLessons').textContent = lessonCount;
-                document.getElementById('statUsers').textContent = userCount;
-                document.getElementById('statFeedbacks').textContent = feedbackCount;
-
-                document.getElementById('totalContent').textContent = courseCount + topicCount + lessonCount;
-                document.getElementById('totalUsersRow').textContent = userCount;
-                document.getElementById('totalFeedbacksRow').textContent = feedbackCount;
-
-            } catch (error) {
-                showError('Failed to load stats: ' + error.message);
-            }
-        }
-
-        loadStats();
-
-        // ===== Sidebar Active =====
-        document.querySelectorAll('.sidebar__link').forEach(link => {
-            if (link.getAttribute('href') === 'index.html') {
-                link.classList.add('sidebar__link--active');
-            }
-        });
-    </script>
+   <!-- SCRIPTS                                  -->
+    
+    <script type="module" src="js/dashboard.js"></script>
 
 </body>
 </html>

@@ -6,6 +6,8 @@ const logoutBtn = document.getElementById("logoutBtn");
 const registerBtn = document.getElementById("register");
 const loginBtn = document.getElementById("login");
 const profileBtn = document.getElementById("profileBtn");
+const mobileAuthContainer = document.getElementById("auth-mobile-container");
+const mobileProfileLink = document.getElementById("auth-profile-link");
 
 logoutBtn.addEventListener("click",() => {
   setTimeout(() => {
@@ -14,15 +16,17 @@ logoutBtn.addEventListener("click",() => {
 });
 document.addEventListener('DOMContentLoaded',() => {
   if(isLoggedIn()){
-    console.log("Login !");
-    
     registerBtn.style.display = "none";
     loginBtn.style.display = "none";
     logoutBtn.style.display = "block";
     profileBtn.style.display = "block";
+    mobileAuthContainer.style.display="none";
+    mobileProfileLink.style.display="block";
   }if(!isLoggedIn()){
     profileBtn.style.display="none";
     logoutBtn.style.display="none";
+    mobileProfileLink.style.display="none";
+    mobileAuthContainer.style.display="block";
   }
 });
 function renderHeroTechStrip() {

@@ -48,11 +48,9 @@ form.addEventListener("submit", async (e) => {
 
         }, 800);
 
-    } catch (err) {
-
-        message.style.color = "red";
-        message.textContent = err.message;
-
-    }
+    } catch (error) {
+    console.error(error);
+    throw new Error(error.message || "Unable to connect to server.");
+}
 
 });

@@ -152,7 +152,7 @@
                     return `
                         <tr>
                             <td>${index + 1}</td>
-                            <td><strong>${course.title}</strong></td>
+                            <td><strong>${course.name}</strong></td>
                             <td>${course.description?.substring(0, 50) || ''}${course.description?.length > 50 ? '...' : ''}</td>
                             <td>${courseTopics.length}</td>
                             <td>${courseLessons.length}</td>
@@ -181,7 +181,7 @@
                 if (!course) return;
 
                 document.getElementById('courseId').value = course.id;
-                document.getElementById('courseTitle').value = course.title;
+                document.getElementById('courseTitle').value = course.name;
                 document.getElementById('courseDescription').value = course.description || '';
                 document.getElementById('courseThumbnail').value = course.thumbnail || '';
                 document.getElementById('courseModalTitle').textContent = '✏️ Edit Course';
