@@ -141,25 +141,13 @@ export function closeAllModals() {
     document.body.style.overflow = '';
 }
 
-// ======================================== */
-// LOADING HELPERS                         */
-// ======================================== */
 
 /**
- * Show loading state on a button
  * @param {string} buttonId - The ID of the button
  * @param {string} text - Loading text (default: 'Loading...')
  */
-// export function showLoading(buttonId, text = 'Loading...') {
-//     const btn = document.getElementById(buttonId);
-//     if (!btn) return;
-//     btn.disabled = true;
-//     btn._originalText = btn.innerHTML;
-//     btn.innerHTML = `<span class="loading-spinner"></span> ${text}`;
-// }
 
 /**
- * Hide loading state on a button
  * @param {string} buttonId - The ID of the button
  */
 export function hideLoading(buttonId) {
@@ -171,13 +159,7 @@ export function hideLoading(buttonId) {
         delete btn._originalText;
     }
 }
-
-// ======================================== */
-// FORMAT HELPERS                          */
-// ======================================== */
-
 /**
- * Format a date string to a readable format
  * @param {string} dateString - ISO date string
  * @returns {string} Formatted date (e.g., "Jan 15, 2026")
  */
@@ -196,7 +178,6 @@ export function formatDate(dateString) {
 }
 
 /**
- * Truncate text to a specified length
  * @param {string} text - The text to truncate
  * @param {number} length - Maximum length (default: 50)
  * @returns {string} Truncated text with '...' if longer
@@ -207,7 +188,6 @@ export function truncateText(text, length = 50) {
 }
 
 /**
- * Generate star rating HTML
  * @param {number} rating - Rating from 1-5
  * @returns {string} HTML string of stars
  */
@@ -236,10 +216,6 @@ export function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-// ======================================== */
-// EVENT HANDLERS (Auto-init)             */
-// ======================================== */
-
 // Close modal on overlay click
 document.addEventListener('click', function(e) {
     if (e.target.classList.contains('modal-overlay')) {
@@ -254,10 +230,6 @@ document.addEventListener('keydown', function(e) {
         closeAllModals();
     }
 });
-
-// ======================================== */
-// EXPORTS                                  */
-// ======================================== */
 
 export default {
     showToast,

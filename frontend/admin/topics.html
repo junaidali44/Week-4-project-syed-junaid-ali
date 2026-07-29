@@ -142,7 +142,7 @@
                 tbody.innerHTML = topics.map((topic, index) => {
                     const course = courses.find(c => c.id === topic.courseId);
                     const topicLessons = lessons.filter(l => l.topicId === topic.id);
-                    console.log(topicLessons);
+        
                     
                     return `
                         <tr>
