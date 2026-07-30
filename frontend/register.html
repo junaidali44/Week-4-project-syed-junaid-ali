@@ -5,28 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="EZLearn — Create your account" />
     <meta name="theme-color" content="#0A0E1A" />
-
     <title>EZLearn — Create Account</title>
 
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
-    <!-- Auth Styles -->
     <link rel="stylesheet" href="css/auth.css" />
 </head>
 <body class="auth-body">
 
-    <!-- ===== BACKGROUND ORBS ===== -->
+    <!-- Background Orbs -->
     <div class="auth-bg-orb auth-bg-orb--1"></div>
     <div class="auth-bg-orb auth-bg-orb--2"></div>
     <div class="auth-bg-orb auth-bg-orb--3"></div>
 
-    <!-- ===== REGISTER CONTAINER ===== -->
+    <!-- Register Container -->
     <div class="auth-container">
         <div class="auth-card">
 
@@ -47,103 +41,59 @@
                 <p class="auth-header__subtitle">Start your learning journey today</p>
             </div>
 
-            <!-- ===== REGISTER FORM ===== -->
+            <!-- Register Form -->
             <form class="auth-form" id="registerForm" novalidate>
 
-                <!-- Name Field -->
+                <!-- Name -->
                 <div class="auth-form-group">
                     <label for="name" class="auth-form-label">
                         <i class="fas fa-user"></i>
                         Full Name
                     </label>
                     <div class="auth-input-wrapper">
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            class="auth-input"
-                            placeholder="John Doe"
-                            required
-                            autocomplete="name"
-                        />
-                        <span class="auth-input-icon">
-                            <i class="fas fa-user"></i>
-                        </span>
+                        <input type="text" id="name" name="name" class="auth-input" placeholder="John Doe" required autocomplete="name" />
+                        <span class="auth-input-icon"><i class="fas fa-user"></i></span>
                     </div>
                     <span class="auth-error" id="nameError">Please enter your full name</span>
                 </div>
 
-                <!-- Email Field -->
+                <!-- Email -->
                 <div class="auth-form-group">
                     <label for="email" class="auth-form-label">
                         <i class="fas fa-envelope"></i>
                         Email Address
                     </label>
                     <div class="auth-input-wrapper">
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            class="auth-input"
-                            placeholder="you@example.com"
-                            required
-                            autocomplete="email"
-                        />
-                        <span class="auth-input-icon">
-                            <i class="fas fa-envelope"></i>
-                        </span>
+                        <input type="email" id="email" name="email" class="auth-input" placeholder="you@example.com" required autocomplete="email" />
+                        <span class="auth-input-icon"><i class="fas fa-envelope"></i></span>
                     </div>
                     <span class="auth-error" id="emailError">Please enter a valid email</span>
                 </div>
 
-                <!-- Password Field -->
+                <!-- Password -->
                 <div class="auth-form-group">
                     <label for="password" class="auth-form-label">
                         <i class="fas fa-lock"></i>
                         Password
                     </label>
                     <div class="auth-input-wrapper">
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="auth-input"
-                            placeholder="Create a password"
-                            required
-                            minlength="6"
-                            autocomplete="new-password"
-                        />
-                        <button
-                            type="button"
-                            class="auth-password-toggle"
-                            id="passwordToggle"
-                            aria-label="Toggle password visibility"
-                        >
+                        <input type="password" id="password" name="password" class="auth-input" placeholder="Create a password" required minlength="6" autocomplete="new-password" />
+                        <button type="button" class="auth-password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
                             <i class="fas fa-eye" id="passwordIcon"></i>
                         </button>
                     </div>
                     <span class="auth-error" id="passwordError">Password must be at least 6 characters</span>
                 </div>
 
-                <!-- Confirm Password Field -->
+                <!-- Confirm Password -->
                 <div class="auth-form-group">
                     <label for="confirmPassword" class="auth-form-label">
                         <i class="fas fa-check-circle"></i>
                         Confirm Password
                     </label>
                     <div class="auth-input-wrapper">
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            class="auth-input"
-                            placeholder="Confirm your password"
-                            required
-                            minlength="6"
-                            autocomplete="new-password"
-                        />
-                        <span class="auth-input-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </span>
+                        <input type="password" id="confirmPassword" class="auth-input" placeholder="Confirm your password" required minlength="6" autocomplete="new-password" />
+                        <span class="auth-input-icon"><i class="fas fa-check-circle"></i></span>
                     </div>
                     <span class="auth-error" id="confirmError">Passwords do not match</span>
                 </div>
@@ -160,23 +110,26 @@
                     </label>
                 </div>
 
-                <!-- Submit Button -->
+                <!-- Submit -->
                 <button type="submit" class="auth-btn auth-btn--primary auth-btn--full" id="registerBtn">
                     <span id="registerBtnText">Create Account</span>
                     <i class="fas fa-arrow-right" id="registerBtnIcon"></i>
                 </button>
 
-                <!-- Loading State -->
+                <!-- Loading -->
                 <div class="auth-loading" id="registerLoading">
                     <div class="auth-spinner"></div>
-                    <span>Creating account...</span>
+                    <span id="registerMessage">Creating account...</span>
                 </div>
 
+                <!-- Message -->
+                <div id="registerFormMessage" style="text-align:center;font-size:0.875rem;display:none;"></div>
+
             </form>
-            <p id="message"></p>
+
             <!-- Divider -->
             <div class="auth-divider">
-                <span>or continue with</span>
+                <span>or</span>
             </div>
 
             <!-- Sign In Link -->
@@ -188,8 +141,7 @@
         </div>
     </div>
 
-    <!-- ===== SCRIPTS ===== -->
     <script type="module" src="js/register.js"></script>
-    <!-- <script src="js/auth.js"></script> -->
+
 </body>
 </html>

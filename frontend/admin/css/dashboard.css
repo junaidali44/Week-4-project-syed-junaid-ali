@@ -485,8 +485,8 @@ button {
 /* CARDS                                   */
 /* ======================================== */
 .card {
-    width: 100%;
-    max-width: 800px;
+    width: auto;
+    max-width:1100px;
     background: var(--color-bg-secondary);
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border);

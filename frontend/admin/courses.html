@@ -510,9 +510,7 @@
             }
         });
 
-        // ========================================
-        // AUTH CHECK
-        // ========================================
+        
         const token = sessionStorage.getItem('token');
         if (!token) {
             showToast('warning', 'Authentication Required', 'Please login to continue');
@@ -545,7 +543,6 @@
                     tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><i class="fas fa-book-open"></i><h3>No courses yet</h3><p>Create your first course</p></div></td></tr>`;
                     return;
                 }
-
                 tbody.innerHTML = courses.map((course, index) => `
                     <tr>
                         <td>${index + 1}</td>
@@ -625,7 +622,7 @@
             const slug = document.getElementById('courseSlug').value.trim();
             const description = document.getElementById('courseDescription').value.trim();
             const thumbnail = document.getElementById('courseThumbnail').value.trim();
-
+           
             // Validation
             if (!title) {
                 showError('Please enter a course title.');
@@ -652,7 +649,6 @@
                 };
 
                 if (id) {
-                    // UPDATE — using course_id
                     await updateCourse(parseInt(id), courseData);
                     showToast('success', 'Updated', 'Course updated successfully');
                 } else {

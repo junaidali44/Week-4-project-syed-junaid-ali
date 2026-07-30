@@ -6,12 +6,359 @@
     <title>EZLearn — Manage Feedbacks</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+
+    <style>
+        /* ======================================== */
+        /* FEEDBACKS PAGE — STYLES                  */
+        /* ======================================== */
+
+        .main-content {
+            margin-left: 260px;
+            padding: 28px 32px 48px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--color-text-muted);
+        }
+
+        .empty i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.2;
+            color: var(--color-primary);
+            display: block;
+        }
+
+        .empty h3 {
+            font-size: 1.125rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .empty p {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header__left h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header__left p {
+            font-size: 0.9375rem;
+            color: var(--color-text-secondary);
+            margin-top: 2px;
+        }
+
+        .card {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all var(--duration-base) var(--ease-out);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--color-border-hover);
+        }
+
+        .card__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card__title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            margin: 0 -4px;
+            padding: 0 4px;
+        }
+
+        .table-wrap table {
+            width: 100%;
+            min-width: 550px;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .table-wrap thead {
+            background: var(--color-surface);
+        }
+
+        .table-wrap th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--color-border);
+            white-space: nowrap;
+        }
+
+        .table-wrap th i {
+            margin-right: 6px;
+        }
+
+        .table-wrap td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            vertical-align: middle;
+        }
+
+        .table-wrap tr {
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .table-wrap tr:hover td {
+            background: var(--color-surface);
+        }
+
+        .table-wrap td strong {
+            color: var(--color-text-primary);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge--success {
+            background: var(--color-success-bg);
+            color: var(--color-success);
+        }
+
+        .badge--warning {
+            background: var(--color-warning-bg);
+            color: var(--color-warning);
+        }
+
+        .badge--danger {
+            background: var(--color-error-bg);
+            color: var(--color-error);
+        }
+
+        /* ===== Feedback Cards Grid ===== */
+        .feedback-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .feedback-card {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            transition: all var(--duration-base) var(--ease-out);
+        }
+
+        .feedback-card:hover {
+            border-color: var(--color-border-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .feedback-card__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .feedback-card__name {
+            font-weight: 600;
+            color: var(--color-text-primary);
+            font-size: 1rem;
+        }
+
+        .feedback-card__email {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+        }
+
+        .feedback-card__date {
+            font-size: 0.7rem;
+            color: var(--color-text-muted);
+            display: block;
+            margin-top: 8px;
+        }
+
+        .feedback-card__message {
+            color: var(--color-text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            margin: 8px 0;
+        }
+
+        .feedback-card__subject {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: var(--radius-full);
+            font-size: 0.65rem;
+            font-weight: 500;
+            background: var(--color-primary-soft);
+            color: var(--color-primary);
+        }
+
+        .btn--danger {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn--danger:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn--sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+                padding-top: 72px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-header__left h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .card__header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .table-wrap {
+                margin: 0 -12px;
+                padding: 0 12px;
+            }
+
+            .table-wrap table {
+                min-width: 500px;
+                font-size: 0.8125rem;
+            }
+
+            .table-wrap th,
+            .table-wrap td {
+                padding: 10px 12px;
+                white-space: nowrap;
+            }
+
+            .table-wrap th {
+                font-size: 0.7rem;
+            }
+
+            .feedback-cards-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 12px;
+                padding-top: 68px;
+            }
+
+            .page-header__left h1 {
+                font-size: 1.25rem;
+            }
+
+            .card {
+                padding: 12px;
+            }
+
+            .table-wrap {
+                margin: 0 -8px;
+                padding: 0 8px;
+            }
+
+            .table-wrap table {
+                min-width: 420px;
+                font-size: 0.75rem;
+            }
+
+            .table-wrap th,
+            .table-wrap td {
+                padding: 8px 10px;
+                white-space: nowrap;
+            }
+
+            .table-wrap th {
+                font-size: 0.625rem;
+            }
+
+            .btn--sm {
+                padding: 4px 8px;
+                font-size: 0.65rem;
+            }
+
+            .feedback-card {
+                padding: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar__logo">
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
@@ -36,15 +383,17 @@
         </div>
     </aside>
 
-    <main class="main">
+    <!-- ===== MAIN ===== -->
+    <main class="main-content">
 
         <div class="page-header">
             <div class="page-header__left">
-                <h1>💬 Feedbacks</h1>
+                <h1><i class="fas fa-comment-dots" style="color: var(--color-primary);"></i> Feedbacks</h1>
                 <p>View all user feedbacks</p>
             </div>
         </div>
 
+        <!-- ===== Feedback Table ===== -->
         <div class="card">
             <div class="card__header">
                 <span class="card__title">📋 All Feedbacks</span>
@@ -52,108 +401,244 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>#</th><th>User</th><th>Rating</th><th>Message</th><th>Date</th><th>Actions</th></tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody id="feedbacksTable">
-                        <tr><td colspan="6"><div class="empty"><i class="fas fa-comment"></i><h3>No feedbacks yet</h3></div></td></tr>
+                        <tr><td colspan="7"><div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3><p>Please wait</p></div></td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <!-- ===== Feedback Cards ===== -->
-        <div class="stats" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));" id="feedbackCards">
-            <!-- Rendered by JS -->
+        <div class="card">
+            <div class="card__header">
+                <span class="card__title">📇 Feedback Cards</span>
+            </div>
+            <div class="feedback-cards-grid" id="feedbackCards">
+                <!-- Rendered by JavaScript -->
+            </div>
         </div>
 
     </main>
 
+    <!-- ======================================== -->
+    <!-- SCRIPTS                                  -->
+    <!-- ======================================== -->
     <script type="module">
-        import { showToast, showError } from '../js/components/ui.js';
+        // ========================================
+        // IMPORTS
+        // ========================================
         import { getFeedbacks, deleteFeedback } from '../js/services/feedbackService.js';
-        
-        if (!sessionStorage.getItem('token')) window.location.href = '../login.html';
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Logout?')) {
+        // ========================================
+        // TOAST SYSTEM
+        // ========================================
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const existing = container.querySelectorAll('.toast');
+            existing.forEach(t => t.remove());
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast--${type}`;
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+
+            toast.innerHTML = `
+                <div class="toast__icon"><i class="fas ${icons[type] || icons.info}"></i></div>
+                <div class="toast__content">
+                    <div class="toast__title">${title || 'Info'}</div>
+                    <div class="toast__message">${message || ''}</div>
+                </div>
+                <button class="toast__close" onclick="this.closest('.toast').remove()"><i class="fas fa-times"></i></button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('toast--hiding');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+
+            toast.addEventListener('click', () => {
+                toast.classList.add('toast--hiding');
+                setTimeout(() => toast.remove(), 300);
+            });
+        }
+
+        function showError(message) {
+            showToast('error', 'Error', message);
+        }
+
+        // ========================================
+        // AUTH CHECK
+        // ========================================
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            showToast('warning', 'Authentication Required', 'Please login to continue');
+            setTimeout(() => {
+                window.location.href = '../login.html';
+            }, 1500);
+        }
+
+        // ========================================
+        // LOGOUT
+        // ========================================
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem('user');
                 window.location.href = '../login.html';
             }
         });
 
-        function renderStars(rating) {
-            return '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
+        // ========================================
+        // FORMAT DATE
+        // ========================================
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
         }
 
+        // ========================================
+        // TRUNCATE TEXT
+        // ========================================
+        function truncateText(text, maxLength = 60) {
+            if (!text) return '';
+            return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+        }
+
+        // ========================================
+        // LOAD FEEDBACKS
+        // ========================================
         async function loadFeedbacks() {
+            const tbody = document.getElementById('feedbacksTable');
+            const cardsContainer = document.getElementById('feedbackCards');
+
             try {
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3><p>Please wait</p></div></td></tr>`;
+                cardsContainer.innerHTML = `<div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3></div>`;
+
                 const res = await getFeedbacks();
                 const feedbacks = res.data || [];
 
-                // Table
-                const tbody = document.getElementById('feedbacksTable');
-
                 if (feedbacks.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="fas fa-comment"></i><h3>No feedbacks yet</h3></div></td></tr>`;
-                } else {
-                    tbody.innerHTML = feedbacks.map((fb, index) => `
+                    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><i class="fas fa-comment-dots"></i><h3>No feedbacks yet</h3></div></td></tr>`;
+                    cardsContainer.innerHTML = `<div class="empty"><i class="fas fa-comment-dots"></i><h3>No feedbacks yet</h3></div>`;
+                    return;
+                }
+
+                // ===== Render Table =====
+                tbody.innerHTML = feedbacks.map((fb, index) => {
+                    const feedbackId = fb.feedback_id || fb.id;
+                    return `
                         <tr>
                             <td>${index + 1}</td>
-                            <td><strong>${fb.user || 'Anonymous'}</strong></td>
-                            <td>${renderStars(fb.rating)}</td>
-                            <td>${fb.message?.substring(0, 60) || ''}${fb.message?.length > 60 ? '...' : ''}</td>
-                            <td>${fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : 'N/A'}</td>
+                            <td><strong>${fb.name || 'Anonymous'}</strong></td>
+                            <td>${fb.email || '—'}</td>
+                            <td><span class="badge badge--info">${fb.subject || 'Feedback'}</span></td>
+                            <td>${truncateText(fb.message, 50)}</td>
+                            <td>${formatDate(fb.created_at)}</td>
                             <td>
-                                <button class="btn btn--danger btn--sm" onclick="deleteFeedbackHandler(${fb.id})">
+                                <button class="btn btn--danger btn--sm" onclick="deleteFeedbackHandler(${feedbackId})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
-                    `).join('');
-                }
+                    `;
+                }).join('');
 
-                // Cards
-                const cardsContainer = document.getElementById('feedbackCards');
-
-                if (feedbacks.length === 0) {
-                    cardsContainer.innerHTML = `<div class="empty" style="grid-column: 1 / -1;"><i class="fas fa-comment"></i><h3>No feedbacks yet</h3></div>`;
-                } else {
-                    cardsContainer.innerHTML = feedbacks.map(fb => `
-                        <div class="stat" style="display: flex; flex-direction: column; gap: 8px;">
-                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                <strong style="color: var(--text-primary);">${fb.user || 'Anonymous'}</strong>
-                                <span style="font-size: 0.875rem;">${renderStars(fb.rating)}</span>
+                // ===== Render Cards =====
+                cardsContainer.innerHTML = feedbacks.map((fb) => {
+                    const feedbackId = fb.feedback_id || fb.id;
+                    return `
+                        <div class="feedback-card">
+                            <div class="feedback-card__header">
+                                <span class="feedback-card__name">${fb.name || 'Anonymous'}</span>
+                                <span class="feedback-card__subject">${fb.subject || 'Feedback'}</span>
                             </div>
-                            <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 4px 0;">${fb.message || ''}</p>
-                            <span style="font-size: 0.75rem; color: var(--text-muted);">${fb.createdAt ? new Date(fb.createdAt).toLocaleDateString() : 'N/A'}</span>
+                            <div class="feedback-card__email">${fb.email || '—'}</div>
+                            <p class="feedback-card__message">${fb.message || 'No message provided'}</p>
+                            <span class="feedback-card__date">${formatDate(fb.created_at)}</span>
+                            <div style="margin-top: 10px;">
+                                <button class="btn btn--danger btn--sm" onclick="deleteFeedbackHandler(${feedbackId})">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
                         </div>
-                    `).join('');
-                }
+                    `;
+                }).join('');
 
             } catch (error) {
-                showError('Failed to load feedbacks: ' + error.message);
+                console.error('Load feedbacks error:', error);
+                tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><i class="fas fa-exclamation-circle" style="color: var(--color-error);"></i><h3>Failed to load feedbacks</h3><p>${error.message || 'Please try again'}</p></div></td></tr>`;
+                cardsContainer.innerHTML = `<div class="empty"><i class="fas fa-exclamation-circle" style="color: var(--color-error);"></i><h3>Failed to load feedbacks</h3></div>`;
+                showError('Failed to load feedbacks: ' + (error.message || 'Unknown error'));
             }
         }
 
+        // ========================================
+        // DELETE FEEDBACK
+        // ========================================
         window.deleteFeedbackHandler = async function(id) {
             if (!confirm('Delete this feedback?')) return;
+
             try {
                 await deleteFeedback(id);
                 showToast('success', 'Deleted', 'Feedback deleted successfully');
                 loadFeedbacks();
             } catch (error) {
-                showError('Failed to delete feedback: ' + error.message);
+                console.error('Delete feedback error:', error);
+                showError('Failed to delete feedback: ' + (error.message || 'Unknown error'));
             }
         };
 
-        loadFeedbacks();
-
+        // ========================================
+        // SIDEBAR ACTIVE STATE
+        // ========================================
         document.querySelectorAll('.sidebar__link').forEach(link => {
             if (link.getAttribute('href') === 'feedbacks.html') {
                 link.classList.add('sidebar__link--active');
             }
         });
+
+        // ========================================
+        // CONSOLE HELPERS
+        // ========================================
+        console.log('🚀 EZLearn — Feedbacks Page v2.0');
+        console.log('📚 Using real feedbackService API');
+        console.log('🔑 Feedback ID field: feedback_id');
+
+        // ========================================
+        // INIT
+        // ========================================
+        loadFeedbacks();
+
+        // Expose functions globally
+        window.deleteFeedbackHandler = deleteFeedbackHandler;
     </script>
 
 </body>

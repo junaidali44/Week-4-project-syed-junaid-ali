@@ -6,12 +6,459 @@
     <title>EZLearn — Manage Lessons</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+
+    <style>
+        /* ======================================== */
+        /* LESSONS PAGE — STYLES                    */
+        /* ======================================== */
+
+        .main-content {
+            margin-left: 260px;
+            padding: 28px 32px 48px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--color-text-muted);
+        }
+
+        .empty i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.2;
+            color: var(--color-primary);
+            display: block;
+        }
+
+        .empty h3 {
+            font-size: 1.125rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .empty p {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            max-width: 640px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            animation: modalIn 0.3s var(--ease-out);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .modal__title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .modal__close {
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: color var(--duration-fast) var(--ease-out);
+            line-height: 1;
+            padding: 4px 8px;
+        }
+
+        .modal__close:hover {
+            color: var(--color-text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group .required {
+            color: var(--color-error);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            font-size: 0.9375rem;
+            font-family: var(--font-display);
+            transition: all var(--duration-fast) var(--ease-out);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px var(--color-primary-soft);
+        }
+
+        .form-control::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .form-control.code-input {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+        }
+
+        select.form-control {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        textarea.form-control.code-input {
+            min-height: 120px;
+        }
+
+        .form-actions {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .btn--warning {
+            background: var(--color-warning);
+            color: white;
+        }
+
+        .btn--warning:hover {
+            background: #D97706;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn--danger {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn--danger:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn--sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+
+        .btn--full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header__left h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header__left p {
+            font-size: 0.9375rem;
+            color: var(--color-text-secondary);
+            margin-top: 2px;
+        }
+
+        .page-header__right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all var(--duration-base) var(--ease-out);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--color-border-hover);
+        }
+
+        .card__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card__title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            margin: 0 -4px;
+            padding: 0 4px;
+        }
+
+        .table-wrap table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .table-wrap thead {
+            background: var(--color-surface);
+        }
+
+        .table-wrap th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--color-border);
+            white-space: nowrap;
+        }
+
+        .table-wrap th i {
+            margin-right: 6px;
+        }
+
+        .table-wrap td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            vertical-align: middle;
+        }
+
+        .table-wrap tr {
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .table-wrap tr:hover td {
+            background: var(--color-surface);
+        }
+
+        .table-wrap td strong {
+            color: var(--color-text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+                padding-top: 72px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-header__right {
+                width: 100%;
+            }
+
+            .page-header__right .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .page-header__left h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .card__header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .table-wrap {
+                margin: 0 -12px;
+                padding: 0 12px;
+            }
+
+            .table-wrap table {
+                min-width: 500px;
+                font-size: 0.8125rem;
+            }
+
+            .table-wrap th,
+            .table-wrap td {
+                padding: 10px 12px;
+                white-space: nowrap;
+            }
+
+            .table-wrap th {
+                font-size: 0.7rem;
+            }
+
+            .modal {
+                padding: 24px 16px;
+                margin: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 12px;
+                padding-top: 68px;
+            }
+
+            .page-header__left h1 {
+                font-size: 1.25rem;
+            }
+
+            .card {
+                padding: 12px;
+            }
+
+            .table-wrap {
+                margin: 0 -8px;
+                padding: 0 8px;
+            }
+
+            .table-wrap table {
+                min-width: 420px;
+                font-size: 0.75rem;
+            }
+
+            .table-wrap th,
+            .table-wrap td {
+                padding: 8px 10px;
+                white-space: nowrap;
+            }
+
+            .table-wrap th {
+                font-size: 0.625rem;
+            }
+
+            .btn--sm {
+                padding: 4px 8px;
+                font-size: 0.65rem;
+            }
+
+            .modal {
+                padding: 16px 12px;
+            }
+
+            .form-control {
+                padding: 10px 12px;
+                font-size: 0.875rem;
+            }
+
+            .modal__title {
+                font-size: 1.1rem;
+            }
+
+            textarea.form-control.code-input {
+                min-height: 80px;
+            }
+        }
+        select{
+            overflow: hidden;
+        }
+        option {
+  width: 100%;             
+  height: auto;           
+  padding: 10px;           
+  box-sizing: border-box;  
+  display: block;          
+  background-color: var(--color-bg-secondary);
+            
+}
+    </style>
 </head>
 <body>
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar__logo">
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
@@ -36,11 +483,12 @@
         </div>
     </aside>
 
-    <main class="main">
+    <!-- ===== MAIN ===== -->
+    <main class="main-content">
 
         <div class="page-header">
             <div class="page-header__left">
-                <h1>📝 Lessons</h1>
+                <h1><i class="fas fa-file-alt" style="color: var(--color-primary);"></i> Lessons</h1>
                 <p>Manage all lessons across topics</p>
             </div>
             <div class="page-header__right">
@@ -50,6 +498,7 @@
             </div>
         </div>
 
+        <!-- ===== Lesson Table ===== -->
         <div class="card">
             <div class="card__header">
                 <span class="card__title">📋 All Lessons</span>
@@ -57,10 +506,16 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>#</th><th>Title</th><th>Topic</th><th>Course</th><th>Actions</th></tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Topic</th>
+                            <th>Course</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody id="lessonsTable">
-                        <tr><td colspan="5"><div class="empty"><i class="fas fa-file-alt"></i><h3>No lessons yet</h3><p>Create your first lesson</p></div></td></tr>
+                        <tr><td colspan="5"><div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3><p>Please wait</p></div></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -79,19 +534,25 @@
                 <input type="hidden" id="lessonId" value="" />
                 <div class="form-group">
                     <label>Title <span class="required">*</span></label>
-                    <input type="text" id="lessonTitle" class="form-control" placeholder="e.g., What are Hooks?" required />
-                </div>
-                <div class="form-group">
-                    <label>Content <span class="required">*</span></label>
-                    <textarea id="lessonContent" class="form-control" rows="4" placeholder="Write the lesson content..." required></textarea>
+                    <input type="text" id="lessonTitle" class="form-control" placeholder="e.g., Introduction to Components" required />
                 </div>
                 <div class="form-group">
                     <label>Topic <span class="required">*</span></label>
-                    <select id="lessonTopic" class="form-control" required></select>
+                    <select id="lessonTopic" class="form-control" required>
+                        <option value="">Loading topics...</option>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label>Video URL</label>
-                    <input type="text" id="lessonVideo" class="form-control" placeholder="https://youtube.com/example" />
+                    <label>Description <span class="required">*</span></label>
+                    <textarea id="lessonDescription" class="form-control" rows="3" placeholder="Describe what this lesson covers..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Code Example</label>
+                    <textarea id="lessonCode" class="form-control code-input" rows="4" placeholder="// Paste your code here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Explanation <span class="required">*</span></label>
+                    <textarea id="lessonExplanation" class="form-control" rows="3" placeholder="Explain the code and concept..." required></textarea>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn--primary btn--full" id="lessonSubmitBtn">
@@ -103,33 +564,148 @@
     </div>
 
     <script type="module">
-        import { showToast, showError, showLoading, hideLoading, openModal, closeModal } from '../components/ui.js';
-        import { getLessons, createLesson, updateLesson, deleteLesson } from '../js/services/lessonService.js';
+        import { getLessons, createLesson, updateLesson, deleteLesson } from '../js/services/lessonsService.js';
         import { getTopics } from '../js/services/topicService.js';
         import { getCourses } from '../js/services/courseService.js';
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
 
-        if (!sessionStorage.getItem('token')) window.location.href = '../login.html';
+            const existing = container.querySelectorAll('.toast');
+            existing.forEach(t => t.remove());
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Logout?')) {
+            const toast = document.createElement('div');
+            toast.className = `toast toast--${type}`;
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+
+            toast.innerHTML = `
+                <div class="toast__icon"><i class="fas ${icons[type] || icons.info}"></i></div>
+                <div class="toast__content">
+                    <div class="toast__title">${title || 'Info'}</div>
+                    <div class="toast__message">${message || ''}</div>
+                </div>
+                <button class="toast__close" onclick="this.closest('.toast').remove()"><i class="fas fa-times"></i></button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('toast--hiding');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+
+            toast.addEventListener('click', () => {
+                toast.classList.add('toast--hiding');
+                setTimeout(() => toast.remove(), 300);
+            });
+        }
+
+        function showError(message) {
+            showToast('error', 'Error', message);
+        }
+
+        // ========================================
+        // MODAL SYSTEM
+        // ========================================
+        window.openModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('active');
+        };
+
+        window.closeModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('active');
+        };
+
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // ========================================
+        // LOADING HELPER
+        // ========================================
+        function setLoading(btn, loading) {
+            if (!btn) return;
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Lesson';
+            }
+        }
+
+        // ========================================
+        // AUTH CHECK
+        // ========================================
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            showToast('warning', 'Authentication Required', 'Please login to continue');
+            setTimeout(() => {
+                window.location.href = '../login.html';
+            }, 1500);
+        }
+
+        // ========================================
+        // LOGOUT
+        // ========================================
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem('user');
                 window.location.href = '../login.html';
             }
         });
 
-        async function loadTopicsDropdown() {
+        // ========================================
+        // LOAD TOPICS DROPDOWN
+        // ========================================
+        async function loadTopicsDropdown(selectedId = null) {
             try {
                 const res = await getTopics();
+                const topics = res.data || [];
                 const select = document.getElementById('lessonTopic');
-                select.innerHTML = res.data.map(t => `<option value="${t.id}">${t.title}</option>`).join('');
+
+                if (topics.length === 0) {
+                    select.innerHTML = `<option value="">No topics available</option>`;
+                    return;
+                }
+
+                select.innerHTML = topics.map(t => {
+                    const id = t.topic_id || t.id;
+                    return `<option value="${id}" ${selectedId == id ? 'selected' : ''}>${t.title}</option>`;
+                }).join('');
+
             } catch (error) {
-                showError('Failed to load topics');
+                console.error('Load topics dropdown error:', error);
+                const select = document.getElementById('lessonTopic');
+                select.innerHTML = `<option value="">Failed to load topics</option>`;
+                showError('Failed to load topics for dropdown');
             }
         }
 
+        // ========================================
+        // LOAD LESSONS
+        // ========================================
         async function loadLessons() {
+            const tbody = document.getElementById('lessonsTable');
+
             try {
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3><p>Please wait</p></div></td></tr>`;
+
                 const [lessonsRes, topicsRes, coursesRes] = await Promise.all([
                     getLessons(),
                     getTopics().catch(() => ({ data: [] })),
@@ -140,27 +716,29 @@
                 const topics = topicsRes.data || [];
                 const courses = coursesRes.data || [];
 
-                const tbody = document.getElementById('lessonsTable');
-
                 if (lessons.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><i class="fas fa-file-alt"></i><h3>No lessons yet</h3><p>Create your first lesson</p></div></td></tr>`;
                     return;
                 }
 
                 tbody.innerHTML = lessons.map((lesson, index) => {
-                    const topic = topics.find(t => t.id === lesson.topicId);
-                    const course = courses.find(c => c.id === topic?.courseId);
+                    const lessonId = lesson.lesson_id || lesson.id;
+                    const topicId = lesson.topic_id || lesson.topicId;
+                    const topic = topics.find(t => (t.topic_id || t.id) === topicId);
+                    const courseId = topic?.course_id || topic?.courseId;
+                    const course = courses.find(c => (c.course_id || c.id) === courseId);
+
                     return `
                         <tr>
                             <td>${index + 1}</td>
-                            <td><strong>${lesson.title}</strong></td>
-                            <td>${topic?.title || 'Unknown'}</td>
-                            <td>${course?.title || 'Unknown'}</td>
+                            <td><strong>${lesson.title || 'Untitled'}</strong></td>
+                            <td>${topic?.title || 'Unknown Topic'}</td>
+                            <td>${course?.name || 'Unknown Course'}</td>
                             <td>
-                                <button class="btn btn--warning btn--sm" onclick="editLesson(${lesson.id})">
+                                <button class="btn btn--warning btn--sm" onclick="editLesson(${lessonId})">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn--danger btn--sm" onclick="deleteLessonHandler(${lesson.id})">
+                                <button class="btn btn--danger btn--sm" onclick="deleteLessonHandler(${lessonId})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -169,98 +747,192 @@
                 }).join('');
 
             } catch (error) {
-                showError('Failed to load lessons: ' + error.message);
+                console.error('Load lessons error:', error);
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><i class="fas fa-exclamation-circle" style="color: var(--color-error);"></i><h3>Failed to load lessons</h3><p>${error.message || 'Please try again'}</p></div></td></tr>`;
+                showError('Failed to load lessons: ' + (error.message || 'Unknown error'));
             }
         }
 
-        window.editLesson = async function(id) {
+        // ========================================
+        // EDIT LESSON
+        // ========================================
+        window.editLesson = async function(lessonId) {
             try {
                 const res = await getLessons();
-                const lesson = res.data.find(l => l.id === id);
-                if (!lesson) return;
+                const lessons = res.data || [];
+                const lesson = lessons.find(l => (l.lesson_id || l.id) === lessonId);
 
-                await loadTopicsDropdown();
-                document.getElementById('lessonId').value = lesson.id;
-                document.getElementById('lessonTitle').value = lesson.title;
-                document.getElementById('lessonContent').value = lesson.content || '';
-                document.getElementById('lessonTopic').value = lesson.topicId;
-                document.getElementById('lessonVideo').value = lesson.videoUrl || '';
+                if (!lesson) {
+                    showError('Lesson not found');
+                    return;
+                }
+
+                // Populate form
+                document.getElementById('lessonId').value = lessonId;
+                document.getElementById('lessonTitle').value = lesson.title || '';
+                document.getElementById('lessonDescription').value = lesson.description || '';
+                document.getElementById('lessonCode').value = lesson.code || '';
+                document.getElementById('lessonExplanation').value = lesson.explanation || '';
+
+                // Load topics dropdown with selection
+                const topicId = lesson.topic_id || lesson.topicId;
+                await loadTopicsDropdown(topicId);
+
+                // Update modal
                 document.getElementById('lessonModalTitle').textContent = '✏️ Edit Lesson';
                 document.getElementById('lessonSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Update Lesson';
+
                 openModal('lessonModal');
+
             } catch (error) {
-                showError('Failed to load lesson details');
+                console.error('Edit lesson error:', error);
+                showError('Failed to load lesson details: ' + (error.message || 'Unknown error'));
             }
         };
 
-        window.deleteLessonHandler = async function(id) {
+        // ========================================
+        // DELETE LESSON
+        // ========================================
+        window.deleteLessonHandler = async function(lessonId) {
             if (!confirm('Delete this lesson?')) return;
+
             try {
-                await deleteLesson(id);
+                await deleteLesson(lessonId);
                 showToast('success', 'Deleted', 'Lesson deleted successfully');
                 loadLessons();
             } catch (error) {
-                showError('Failed to delete lesson: ' + error.message);
+                console.error('Delete lesson error:', error);
+                showError('Failed to delete lesson: ' + (error.message || 'Unknown error'));
             }
         };
 
+        // ========================================
+        // LESSON FORM SUBMIT
+        // ========================================
         document.getElementById('lessonForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const id = document.getElementById('lessonId').value;
             const title = document.getElementById('lessonTitle').value.trim();
-            const content = document.getElementById('lessonContent').value.trim();
             const topicId = Number(document.getElementById('lessonTopic').value);
-            const videoUrl = document.getElementById('lessonVideo').value.trim();
+            const description = document.getElementById('lessonDescription').value.trim();
+            const code = document.getElementById('lessonCode').value.trim();
+            const explanation = document.getElementById('lessonExplanation').value.trim();
 
-            if (!title || !content || !topicId) {
-                showError('Please fill in all required fields.');
+            // Validation
+            if (!title) {
+                showError('Please enter a lesson title.');
+                return;
+            }
+            if (!topicId) {
+                showError('Please select a topic.');
+                return;
+            }
+            if (!description) {
+                showError('Please enter a description.');
+                return;
+            }
+            if (!explanation) {
+                showError('Please enter an explanation.');
                 return;
             }
 
-            showLoading('lessonSubmitBtn');
+            const submitBtn = document.getElementById('lessonSubmitBtn');
+            setLoading(submitBtn, true);
 
             try {
+                // ===== API expects: topic_id, title, description, code, explanation =====
+                const lessonData = {
+                    topic_id: topicId,        // ✅ Use topic_id (not topicId)
+                    title: title,
+                    description: description,
+                    code: code || "",         // Empty string if no code
+                    explanation: explanation
+                };
+
                 if (id) {
-                    await updateLesson(id, { title, content, topicId, videoUrl });
+                    // UPDATE — using lesson_id
+                    await updateLesson(parseInt(id), lessonData);
                     showToast('success', 'Updated', 'Lesson updated successfully');
                 } else {
-                    await createLesson({ title, content, topicId, videoUrl });
+                    // CREATE
+                    await createLesson(lessonData);
                     showToast('success', 'Created', 'Lesson created successfully');
                 }
 
+                // Reset and close
                 closeModal('lessonModal');
-                this.reset();
+                document.getElementById('lessonForm').reset();
                 document.getElementById('lessonId').value = '';
                 document.getElementById('lessonModalTitle').textContent = '➕ Add New Lesson';
                 document.getElementById('lessonSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save Lesson';
+
+                // Reload
                 loadLessons();
+
             } catch (error) {
-                showError('Failed to save lesson: ' + error.message);
+                console.error('Save lesson error:', error);
+                const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+                showError('Failed to save lesson: ' + errorMsg);
             } finally {
-                hideLoading('lessonSubmitBtn');
+                setLoading(submitBtn, false);
             }
         });
 
+        // ========================================
+        // RESET MODAL ON CLOSE
+        // ========================================
         document.querySelector('#lessonModal .modal__close').addEventListener('click', function() {
             document.getElementById('lessonForm').reset();
             document.getElementById('lessonId').value = '';
             document.getElementById('lessonModalTitle').textContent = '➕ Add New Lesson';
             document.getElementById('lessonSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save Lesson';
-            closeModal('lessonModal');
         });
 
-        await loadTopicsDropdown();
-        await loadLessons();
+        // ========================================
+        // KEYBOARD SHORTCUTS
+        // ========================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal-overlay.active');
+                if (activeModal) {
+                    activeModal.classList.remove('active');
+                }
+            }
+        });
 
+        // ========================================
+        // SIDEBAR ACTIVE STATE
+        // ========================================
         document.querySelectorAll('.sidebar__link').forEach(link => {
             if (link.getAttribute('href') === 'lessons.html') {
                 link.classList.add('sidebar__link--active');
             }
         });
 
+        // ========================================
+        // CONSOLE HELPERS
+        // ========================================
+        console.log('🚀 EZLearn — Lessons Page v2.0');
+        console.log('📚 Using real lessonService API');
+        console.log('📋 API expects: topic_id, title, description, code, explanation');
+        console.log('💡 Keyboard shortcuts: Escape to close modal');
+
+        // ========================================
+        // INIT
+        // ========================================
+        async function init() {
+            await loadTopicsDropdown();
+            await loadLessons();
+        }
+
+        init();
+
+        // Expose functions globally
         window.openModal = openModal;
         window.closeModal = closeModal;
+        window.editLesson = editLesson;
+        window.deleteLessonHandler = deleteLessonHandler;
     </script>
 
 </body>

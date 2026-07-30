@@ -6,12 +6,467 @@
     <title>EZLearn — Manage Users</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+
+    <style>
+        /* ======================================== */
+        /* USERS PAGE — STYLES                      */
+        /* ======================================== */
+
+        .main-content {
+            margin-left: 260px;
+            padding: 28px 32px 48px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--color-text-muted);
+        }
+
+        .empty i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.2;
+            color: var(--color-primary);
+            display: block;
+        }
+
+        .empty h3 {
+            font-size: 1.125rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .empty p {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            max-width: 540px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            animation: modalIn 0.3s var(--ease-out);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .modal__title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .modal__close {
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: color var(--duration-fast) var(--ease-out);
+            line-height: 1;
+            padding: 4px 8px;
+        }
+
+        .modal__close:hover {
+            color: var(--color-text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group .required {
+            color: var(--color-error);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            font-size: 0.9375rem;
+            font-family: var(--font-display);
+            transition: all var(--duration-fast) var(--ease-out);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px var(--color-primary-soft);
+        }
+
+        .form-control:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        select.form-control {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .form-actions {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .btn--warning {
+            background: var(--color-warning);
+            color: white;
+        }
+
+        .btn--warning:hover {
+            background: #D97706;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn--danger {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn--danger:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn--sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+
+        .btn--full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header__left h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header__left p {
+            font-size: 0.9375rem;
+            color: var(--color-text-secondary);
+            margin-top: 2px;
+        }
+
+        .page-header__right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all var(--duration-base) var(--ease-out);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--color-border-hover);
+        }
+
+        .card__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card__title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            margin: 0 -4px;
+            padding: 0 4px;
+        }
+
+        .table-wrap table {
+            width: 100%;
+            min-width: 550px;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .table-wrap thead {
+            background: var(--color-surface);
+        }
+
+        .table-wrap th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--color-border);
+            white-space: nowrap;
+        }
+
+        .table-wrap th i {
+            margin-right: 6px;
+        }
+
+        .table-wrap td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            vertical-align: middle;
+        }
+
+        .table-wrap tr {
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .table-wrap tr:hover td {
+            background: var(--color-surface);
+        }
+
+        .table-wrap td strong {
+            color: var(--color-text-primary);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge--primary {
+            background: var(--color-primary-soft);
+            color: var(--color-primary);
+        }
+
+        .badge--info {
+            background: var(--color-info-bg);
+            color: var(--color-info);
+        }
+
+        .badge--danger {
+            background: var(--color-error-bg);
+            color: var(--color-error);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+                padding-top: 72px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-header__right {
+                width: 100%;
+            }
+
+            .page-header__right .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .page-header__left h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .card__header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .table-wrap {
+                margin: 0 -12px;
+                padding: 0 12px;
+            }
+
+            .table-wrap table {
+                min-width: 500px;
+                font-size: 0.8125rem;
+            }
+
+            .table-wrap th,
+            .table-wrap td {
+                padding: 10px 12px;
+                white-space: nowrap;
+            }
+
+            .table-wrap th {
+                font-size: 0.7rem;
+            }
+
+            .modal {
+                padding: 24px 16px;
+                margin: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 12px;
+                padding-top: 68px;
+            }
+
+            .page-header__left h1 {
+                font-size: 1.25rem;
+            }
+
+            .card {
+                padding: 12px;
+            }
+
+            .table-wrap {
+                margin: 0 -8px;
+                padding: 0 8px;
+            }
+
+            .table-wrap table {
+                min-width: 420px;
+                font-size: 0.75rem;
+            }
+
+            .table-wrap th,
+            .table-wrap td {
+                padding: 8px 10px;
+                white-space: nowrap;
+            }
+
+            .table-wrap th {
+                font-size: 0.625rem;
+            }
+
+            .btn--sm {
+                padding: 4px 8px;
+                font-size: 0.65rem;
+            }
+
+            .modal {
+                padding: 16px 12px;
+            }
+
+            .form-control {
+                padding: 10px 12px;
+                font-size: 0.875rem;
+            }
+
+            .modal__title {
+                font-size: 1.1rem;
+            }
+        }
+        select{
+            overflow: hidden;
+        }
+        option {
+  width: 100%;             
+  height: auto;           
+  padding: 10px;           
+  box-sizing: border-box;  
+  display: block;          
+  background-color: var(--color-bg-secondary);
+            
+}
+    </style>
 </head>
 <body>
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar__logo">
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
@@ -36,15 +491,17 @@
         </div>
     </aside>
 
-    <main class="main">
+    <!-- ===== MAIN ===== -->
+    <main class="main-content">
 
         <div class="page-header">
             <div class="page-header__left">
-                <h1>👤 Users</h1>
+                <h1><i class="fas fa-users" style="color: var(--color-primary);"></i> Users</h1>
                 <p>Manage all registered users</p>
             </div>
         </div>
 
+        <!-- ===== Users Table ===== -->
         <div class="card">
             <div class="card__header">
                 <span class="card__title">📋 Registered Users</span>
@@ -52,10 +509,17 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>#</th><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody id="usersTable">
-                        <tr><td colspan="6"><div class="empty"><i class="fas fa-users"></i><h3>No users yet</h3></div></td></tr>
+                        <tr><td colspan="6"><div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3><p>Please wait</p></div></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -96,107 +560,296 @@
         </div>
     </div>
 
+    <!-- ======================================== -->
+    <!-- SCRIPTS                                  -->
+    <!-- ======================================== -->
     <script type="module">
-        import { showToast, showError, showLoading, hideLoading, openModal, closeModal } from '../components/ui.js';
+        // ========================================
+        // IMPORTS
+        // ========================================
         import { getUsers, updateUserRole, deleteUser } from '../js/services/userService.js';
 
-        if (!sessionStorage.getItem('token')) window.location.href = '../login.html';
+        // ========================================
+        // TOAST SYSTEM
+        // ========================================
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Logout?')) {
+            const existing = container.querySelectorAll('.toast');
+            existing.forEach(t => t.remove());
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast--${type}`;
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+
+            toast.innerHTML = `
+                <div class="toast__icon"><i class="fas ${icons[type] || icons.info}"></i></div>
+                <div class="toast__content">
+                    <div class="toast__title">${title || 'Info'}</div>
+                    <div class="toast__message">${message || ''}</div>
+                </div>
+                <button class="toast__close" onclick="this.closest('.toast').remove()"><i class="fas fa-times"></i></button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('toast--hiding');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+
+            toast.addEventListener('click', () => {
+                toast.classList.add('toast--hiding');
+                setTimeout(() => toast.remove(), 300);
+            });
+        }
+
+        function showError(message) {
+            showToast('error', 'Error', message);
+        }
+
+        // ========================================
+        // MODAL SYSTEM
+        // ========================================
+        window.openModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('active');
+        };
+
+        window.closeModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('active');
+        };
+
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // ========================================
+        // LOADING HELPER
+        // ========================================
+        function setLoading(btn, loading) {
+            if (!btn) return;
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Update Role';
+            }
+        }
+
+        // ========================================
+        // AUTH CHECK
+        // ========================================
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            showToast('warning', 'Authentication Required', 'Please login to continue');
+            setTimeout(() => {
+                window.location.href = '../login.html';
+            }, 1500);
+        }
+
+        // ========================================
+        // LOGOUT
+        // ========================================
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem('user');
                 window.location.href = '../login.html';
             }
         });
 
+        // ========================================
+        // FORMAT DATE
+        // ========================================
+        function formatDate(dateString) {
+            if (!dateString) return 'N/A';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric'
+            });
+        }
+
+        // ========================================
+        // LOAD USERS
+        // ========================================
         async function loadUsers() {
+            const tbody = document.getElementById('usersTable');
+
             try {
+                tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3><p>Please wait</p></div></td></tr>`;
+
                 const res = await getUsers();
                 const users = res.data || [];
-
-                const tbody = document.getElementById('usersTable');
 
                 if (users.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="fas fa-users"></i><h3>No users yet</h3></div></td></tr>`;
                     return;
                 }
 
-                tbody.innerHTML = users.map((user, index) => `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td><strong>${user.name}</strong></td>
-                        <td>${user.email}</td>
-                        <td><span class="badge badge--${user.role === 'admin' ? 'primary' : 'info'}">${user.role || 'User'}</span></td>
-                        <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}</td>
-                        <td>
-                            <button class="btn btn--warning btn--sm" onclick="editUser(${user.id}, '${user.role}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn--danger btn--sm" onclick="deleteUserHandler(${user.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `).join('');
+                tbody.innerHTML = users.map((user, index) => {
+                    const userId = user.user_id || user.id;
+                    const role = user.role || 'user';
+                    const badgeClass = role === 'admin' ? 'badge--primary' : 'badge--info';
+
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${user.name || 'Unknown'}</strong></td>
+                            <td>${user.email || '—'}</td>
+                            <td><span class="badge ${badgeClass}">${role}</span></td>
+                            <td>${formatDate(user.created_at)}</td>
+                            <td>
+                                <button class="btn btn--warning btn--sm" onclick="editUser(${userId}, '${role}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn--danger btn--sm" onclick="deleteUserHandler(${userId})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
 
             } catch (error) {
-                showError('Failed to load users: ' + error.message);
+                console.error('Load users error:', error);
+                tbody.innerHTML = `<tr><td colspan="6"><div class="empty"><i class="fas fa-exclamation-circle" style="color: var(--color-error);"></i><h3>Failed to load users</h3><p>${error.message || 'Please try again'}</p></div></td></tr>`;
+                showError('Failed to load users: ' + (error.message || 'Unknown error'));
             }
         }
 
-        window.editUser = function(id, role) {
-            document.getElementById('userId').value = id;
-            document.getElementById('userRole').value = role || 'user';
-            openModal('userModal');
-        };
-
-        window.deleteUserHandler = async function(id) {
-            if (!confirm('Delete this user?')) return;
+        // ========================================
+        // EDIT USER — FIXED
+        // ========================================
+        window.editUser = async function(userId, role) {
             try {
-                await deleteUser(id);
-                showToast('success', 'Deleted', 'User deleted successfully');
-                loadUsers();
+                const res = await getUsers();
+                const users = res.data || [];
+                const user = users.find(u => (u.user_id || u.id) === userId);
+
+                if (!user) {
+                    showError('User not found');
+                    return;
+                }
+
+                document.getElementById('userId').value = userId;
+                document.getElementById('userName').value = user.name || '';
+                document.getElementById('userEmail').value = user.email || '';
+                document.getElementById('userRole').value = role || 'user';
+
+                openModal('userModal');
+
             } catch (error) {
-                showError('Failed to delete user: ' + error.message);
+                console.error('Edit user error:', error);
+                showError('Failed to load user details');
             }
         };
 
+        // ========================================
+        // DELETE USER — FIXED
+        // ========================================
+        window.deleteUserHandler = async function(userId) {
+            if (!confirm('Delete this user?')) return;
+
+            try {
+                await deleteUser(userId);
+                showToast('success', 'Deleted', 'User deleted successfully');
+                loadUsers();
+            } catch (error) {
+                console.error('Delete user error:', error);
+                showError('Failed to delete user: ' + (error.message || 'Unknown error'));
+            }
+        };
+
+        // ========================================
+        // USER FORM SUBMIT — FIXED
+        // ========================================
         document.getElementById('userForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const id = document.getElementById('userId').value;
+            const userId = document.getElementById('userId').value;
             const role = document.getElementById('userRole').value;
 
-            if (!id || !role) {
+            if (!userId || !role) {
                 showError('Please select a role.');
                 return;
             }
 
-            showLoading('userSubmitBtn');
+            const submitBtn = document.getElementById('userSubmitBtn');
+            setLoading(submitBtn, true);
 
             try {
-                await updateUserRole(id, role);
+                await updateUserRole(parseInt(userId), role);
                 showToast('success', 'Updated', 'User role updated successfully');
+
                 closeModal('userModal');
                 loadUsers();
+
             } catch (error) {
-                showError('Failed to update user: ' + error.message);
+                console.error('Update user error:', error);
+                showError('Failed to update user: ' + (error.message || 'Unknown error'));
             } finally {
-                hideLoading('userSubmitBtn');
+                setLoading(submitBtn, false);
             }
         });
 
-        loadUsers();
+        // ========================================
+        // KEYBOARD SHORTCUTS
+        // ========================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal-overlay.active');
+                if (activeModal) {
+                    activeModal.classList.remove('active');
+                }
+            }
+        });
 
+        // ========================================
+        // SIDEBAR ACTIVE STATE
+        // ========================================
         document.querySelectorAll('.sidebar__link').forEach(link => {
             if (link.getAttribute('href') === 'users.html') {
                 link.classList.add('sidebar__link--active');
             }
         });
 
+        // ========================================
+        // CONSOLE HELPERS
+        // ========================================
+        console.log('🚀 EZLearn — Users Page v2.0');
+        console.log('📚 Using real userService API');
+        console.log('🔑 User ID field: user_id');
+        console.log('💡 Keyboard shortcuts: Escape to close modal');
+
+        // ========================================
+        // INIT
+        // ========================================
+        loadUsers();
+
+        // Expose functions globally
         window.openModal = openModal;
         window.closeModal = closeModal;
+        window.editUser = editUser;
+        window.deleteUserHandler = deleteUserHandler;
     </script>
 
 </body>

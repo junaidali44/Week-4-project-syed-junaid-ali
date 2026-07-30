@@ -43,7 +43,7 @@ async function getTopic(req, res) {
 async function createTopic(req, res) {
   try {
     const { course_id, title, content, code_example } = req.body;
-    if (!title || !content) {
+    if (!title) {
       res.status(400).json({
         success: false,
         message: "Title and Content required.",

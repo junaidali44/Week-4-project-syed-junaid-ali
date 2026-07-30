@@ -6,12 +6,441 @@
     <title>EZLearn — Manage Topics</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+
+    <style>
+        /* ======================================== */
+        /* TOPICS PAGE — FIXED STYLES              */
+        /* ======================================== */
+
+        .main-content {
+            margin-left: 260px;
+            padding: 28px 32px 48px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--color-text-muted);
+        }
+
+        .empty i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.2;
+            color: var(--color-primary);
+            display: block;
+        }
+
+        .empty h3 {
+            font-size: 1.125rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .empty p {
+            font-size: 0.875rem;
+            color: var(--color-text-muted);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            max-width: 540px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            animation: modalIn 0.3s var(--ease-out);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .modal__title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .modal__close {
+            font-size: 1.5rem;
+            color: var(--color-text-muted);
+            cursor: pointer;
+            transition: color var(--duration-fast) var(--ease-out);
+            line-height: 1;
+            padding: 4px 8px;
+        }
+
+        .modal__close:hover {
+            color: var(--color-text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group .required {
+            color: var(--color-error);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            font-size: 0.9375rem;
+            font-family: var(--font-display);
+            transition: all var(--duration-fast) var(--ease-out);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px var(--color-primary-soft);
+        }
+
+        .form-control::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        select.form-control {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .form-actions {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .btn--warning {
+            background: var(--color-warning);
+            color: white;
+        }
+
+        .btn--warning:hover {
+            background: #D97706;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn--danger {
+            background: var(--color-error);
+            color: white;
+        }
+
+        .btn--danger:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn--sm {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+        }
+
+        .btn--full {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-header__left h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+
+        .page-header__left p {
+            font-size: 0.9375rem;
+            color: var(--color-text-secondary);
+            margin-top: 2px;
+        }
+
+        .page-header__right {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: var(--color-bg-secondary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            padding: 24px;
+            margin-bottom: 24px;
+            transition: all var(--duration-base) var(--ease-out);
+            overflow: hidden;
+        }
+
+        .card:hover {
+            border-color: var(--color-border-hover);
+        }
+
+        .card__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .card__title {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--color-text-primary);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            margin: 0 -4px;
+            padding: 0 4px;
+        }
+
+        .table-wrap table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        .table-wrap thead {
+            background: var(--color-surface);
+        }
+
+        .table-wrap th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--color-border);
+            white-space: nowrap;
+        }
+
+        .table-wrap th i {
+            margin-right: 6px;
+        }
+
+        .table-wrap td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            vertical-align: middle;
+        }
+
+        .table-wrap tr {
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+
+        .table-wrap tr:hover td {
+            background: var(--color-surface);
+        }
+
+        .table-wrap td strong {
+            color: var(--color-text-primary);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+                padding-top: 72px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .page-header__right {
+                width: 100%;
+            }
+
+            .page-header__right .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .page-header__left h1 {
+                font-size: 1.5rem;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .card__header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .table-wrap {
+                margin: 0 -12px;
+                padding: 0 12px;
+            }
+
+            .table-wrap table {
+                min-width: 500px;
+                font-size: 0.8125rem;
+            }
+
+            .table-wrap th,
+            .table-wrap td {
+                padding: 10px 12px;
+                white-space: nowrap;
+            }
+
+            .table-wrap th {
+                font-size: 0.7rem;
+            }
+
+            .modal {
+                padding: 24px 16px;
+                margin: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 12px;
+                padding-top: 68px;
+            }
+
+            .page-header__left h1 {
+                font-size: 1.25rem;
+            }
+
+            .card {
+                padding: 12px;
+            }
+
+            .table-wrap {
+                margin: 0 -8px;
+                padding: 0 8px;
+            }
+
+            .table-wrap table {
+                min-width: 420px;
+                font-size: 0.75rem;
+            }
+
+            .table-wrap th,
+            .table-wrap td {
+                padding: 8px 10px;
+                white-space: nowrap;
+            }
+
+            .table-wrap th {
+                font-size: 0.625rem;
+            }
+
+            .btn--sm {
+                padding: 4px 8px;
+                font-size: 0.65rem;
+            }
+
+            .modal {
+                padding: 16px 12px;
+            }
+
+            .form-control {
+                padding: 10px 12px;
+                font-size: 0.875rem;
+            }
+
+            .modal__title {
+                font-size: 1.1rem;
+            }
+        }
+        select{
+            overflow: hidden;
+        }
+        option {
+  width: 100%;             
+  height: auto;           
+  padding: 10px;           
+  box-sizing: border-box;  
+  display: block;          
+  background-color: var(--color-bg-secondary);
+            
+}
+    </style>
 </head>
 <body>
 
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ===== SIDEBAR ===== -->
     <aside class="sidebar">
         <div class="sidebar__logo">
             <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
@@ -36,11 +465,12 @@
         </div>
     </aside>
 
-    <main class="main">
+    <!-- ===== MAIN ===== -->
+    <main class="main-content">
 
         <div class="page-header">
             <div class="page-header__left">
-                <h1>📂 Topics</h1>
+                <h1><i class="fas fa-list" style="color: var(--color-primary);"></i> Topics</h1>
                 <p>Manage all topics across courses</p>
             </div>
             <div class="page-header__right">
@@ -50,6 +480,7 @@
             </div>
         </div>
 
+        <!-- ===== Topic Table ===== -->
         <div class="card">
             <div class="card__header">
                 <span class="card__title">📋 All Topics</span>
@@ -57,10 +488,16 @@
             <div class="table-wrap">
                 <table>
                     <thead>
-                        <tr><th>#</th><th>Title</th><th>Course</th><th>Lessons</th><th>Actions</th></tr>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Course</th>
+                            <th>Lessons</th>
+                            <th>Actions</th>
+                        </tr>
                     </thead>
                     <tbody id="topicsTable">
-                        <tr><td colspan="5"><div class="empty"><i class="fas fa-list"></i><h3>No topics yet</h3><p>Create your first topic</p></div></td></tr>
+                        <tr><td colspan="5"><div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3><p>Please wait</p></div></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -83,7 +520,9 @@
                 </div>
                 <div class="form-group">
                     <label>Course <span class="required">*</span></label>
-                    <select id="topicCourse" class="form-control" required></select>
+                    <select id="topicCourse" class="form-control" required>
+                        <option value="">Loading courses...</option>
+                    </select>
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn--primary btn--full" id="topicSubmitBtn">
@@ -94,45 +533,169 @@
         </div>
     </div>
 
+    <!-- ======================================== -->
+    <!-- SCRIPTS                                  -->
+    <!-- ======================================== -->
     <script type="module">
-        import { showToast, showError, showLoading, hideLoading, openModal, closeModal } from '../js/components/ui.mjs';
+        // ========================================
+        // IMPORTS
+        // ========================================
         import { getTopics, createTopic, updateTopic, deleteTopic } from '../js/services/topicService.js';
         import { getCourses } from '../js/services/courseService.js';
         import { getLessons } from '../js/services/lessonsService.js';
 
-        if (!sessionStorage.getItem('token')) window.location.href = '../login.html';
+        // ========================================
+        // TOAST SYSTEM
+        // ========================================
+        function showToast(type, title, message) {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Logout?')) {
+            const existing = container.querySelectorAll('.toast');
+            existing.forEach(t => t.remove());
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast--${type}`;
+
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+
+            toast.innerHTML = `
+                <div class="toast__icon"><i class="fas ${icons[type] || icons.info}"></i></div>
+                <div class="toast__content">
+                    <div class="toast__title">${title || 'Info'}</div>
+                    <div class="toast__message">${message || ''}</div>
+                </div>
+                <button class="toast__close" onclick="this.closest('.toast').remove()"><i class="fas fa-times"></i></button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.classList.add('toast--hiding');
+                    setTimeout(() => toast.remove(), 300);
+                }
+            }, 4000);
+
+            toast.addEventListener('click', () => {
+                toast.classList.add('toast--hiding');
+                setTimeout(() => toast.remove(), 300);
+            });
+        }
+
+        function showError(message) {
+            showToast('error', 'Error', message);
+        }
+
+        // ========================================
+        // MODAL SYSTEM
+        // ========================================
+        window.openModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.add('active');
+        };
+
+        window.closeModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('active');
+        };
+
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // ========================================
+        // LOADING HELPER
+        // ========================================
+        function setLoading(btn, loading) {
+            if (!btn) return;
+            if (loading) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Topic';
+            }
+        }
+
+        // ========================================
+        // AUTH CHECK
+        // ========================================
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            showToast('warning', 'Authentication Required', 'Please login to continue');
+            setTimeout(() => {
+                window.location.href = '../login.html';
+            }, 1500);
+        }
+
+        // ========================================
+        // LOGOUT
+        // ========================================
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
                 sessionStorage.removeItem('token');
                 sessionStorage.removeItem('user');
                 window.location.href = '../login.html';
             }
         });
 
-        async function loadCoursesDropdown() {
+        // ========================================
+        // LOAD COURSES DROPDOWN
+        // ========================================
+        async function loadCoursesDropdown(selectedId = null) {
             try {
                 const res = await getCourses();
+                const courses = res.data || [];
                 const select = document.getElementById('topicCourse');
-                select.innerHTML = res.data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+                if (courses.length === 0) {
+                    select.innerHTML = `<option value="">No courses available</option>`;
+                    return;
+                }
+
+                // Use course_id if available, otherwise fallback to id
+                select.innerHTML = courses.map(c => {
+                    const id = c.course_id || c.id;
+                    return `<option value="${id}" ${selectedId == id ? 'selected' : ''}>${c.name}</option>`;
+                }).join('');
+
             } catch (error) {
-                showError('Failed to load courses');
+                console.error('Load courses dropdown error:', error);
+                const select = document.getElementById('topicCourse');
+                select.innerHTML = `<option value="">Failed to load courses</option>`;
+                showError('Failed to load courses for dropdown');
             }
         }
 
+        // ========================================
+        // LOAD TOPICS
+        // ========================================
         async function loadTopics() {
+            const tbody = document.getElementById('topicsTable');
+
             try {
-                const [topicsRes, lessonsRes] = await Promise.all([
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><i class="fas fa-spinner fa-spin"></i><h3>Loading...</h3><p>Please wait</p></div></td></tr>`;
+
+                const [topicsRes, coursesRes, lessonsRes] = await Promise.all([
                     getTopics(),
+                    getCourses().catch(() => ({ data: [] })),
                     getLessons().catch(() => ({ data: [] }))
                 ]);
 
                 const topics = topicsRes.data || [];
-                const lessons = lessonsRes.data || [];
-                const coursesRes = await getCourses();
                 const courses = coursesRes.data || [];
-
-                const tbody = document.getElementById('topicsTable');
+                const lessons = lessonsRes.data || [];
 
                 if (topics.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><i class="fas fa-list"></i><h3>No topics yet</h3><p>Create your first topic</p></div></td></tr>`;
@@ -140,21 +703,22 @@
                 }
 
                 tbody.innerHTML = topics.map((topic, index) => {
-                    const course = courses.find(c => c.id === topic.courseId);
-                    const topicLessons = lessons.filter(l => l.topicId === topic.id);
-        
-                    
+                    const topicId = topic.topic_id || topic.id;
+                    const courseId = topic.course_id || topic.courseId;
+                    const course = courses.find(c => (c.course_id || c.id) === courseId);
+                    const topicLessons = lessons.filter(l => (l.topic_id || l.topicId) === topicId);
+
                     return `
                         <tr>
                             <td>${index + 1}</td>
-                            <td><strong>${topic.title}</strong></td>
-                            <td>${course?.name || 'Unknown'}</td>
+                            <td><strong>${topic.title || 'Untitled'}</strong></td>
+                            <td>${course?.name || 'Unknown Course'}</td>
                             <td>${topicLessons.length}</td>
                             <td>
-                                <button class="btn btn--warning btn--sm" onclick="editTopic(${topic.id})">
+                                <button class="btn btn--warning btn--sm" onclick="editTopic(${topicId})">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn--danger btn--sm" onclick="deleteTopicHandler(${topic.id})">
+                                <button class="btn btn--danger btn--sm" onclick="deleteTopicHandler(${topicId})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -163,39 +727,65 @@
                 }).join('');
 
             } catch (error) {
-                showError('Failed to load topics: ' + error.message);
+                console.error('Load topics error:', error);
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><i class="fas fa-exclamation-circle" style="color: var(--color-error);"></i><h3>Failed to load topics</h3><p>${error.message || 'Please try again'}</p></div></td></tr>`;
+                showError('Failed to load topics: ' + (error.message || 'Unknown error'));
             }
         }
 
-        window.editTopic = async function(id) {
+        // ========================================
+        // EDIT TOPIC
+        // ========================================
+        window.editTopic = async function(topicId) {
             try {
                 const res = await getTopics();
-                const topic = res.data.find(t => t.id === id);
-                if (!topic) return;
+                const topics = res.data || [];
+                const topic = topics.find(t => (t.topic_id || t.id) === topicId);
 
-                await loadCoursesDropdown();
-                document.getElementById('topicId').value = topic.id;
-                document.getElementById('topicTitle').value = topic.title;
-                document.getElementById('topicCourse').value = topic.courseId;
+                if (!topic) {
+                    showError('Topic not found');
+                    return;
+                }
+
+                // Populate form
+                document.getElementById('topicId').value = topicId;
+                document.getElementById('topicTitle').value = topic.title || '';
+
+                // Load courses dropdown with selection
+                const courseId = topic.course_id || topic.courseId;
+                await loadCoursesDropdown(courseId);
+
+                // Update modal
                 document.getElementById('topicModalTitle').textContent = '✏️ Edit Topic';
                 document.getElementById('topicSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Update Topic';
+
                 openModal('topicModal');
+
             } catch (error) {
-                showError('Failed to load topic details');
+                console.error('Edit topic error:', error);
+                showError('Failed to load topic details: ' + (error.message || 'Unknown error'));
             }
         };
 
-        window.deleteTopicHandler = async function(id) {
+        // ========================================
+        // DELETE TOPIC
+        // ========================================
+        window.deleteTopicHandler = async function(topicId) {
             if (!confirm('Delete this topic and all its lessons?')) return;
+
             try {
-                await deleteTopic(id);
+                await deleteTopic(topicId);
                 showToast('success', 'Deleted', 'Topic deleted successfully');
                 loadTopics();
             } catch (error) {
-                showError('Failed to delete topic: ' + error.message);
+                console.error('Delete topic error:', error);
+                showError('Failed to delete topic: ' + (error.message || 'Unknown error'));
             }
         };
 
+        // ========================================
+        // TOPIC FORM SUBMIT — FIXED FOR API
+        // ========================================
         document.getElementById('topicForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -203,54 +793,111 @@
             const title = document.getElementById('topicTitle').value.trim();
             const courseId = Number(document.getElementById('topicCourse').value);
 
-            if (!title || !courseId) {
-                showError('Please fill in all required fields.');
+            // Validation
+            if (!title) {
+                showError('Please enter a topic title.');
+                return;
+            }
+            if (!courseId) {
+                showError('Please select a course.');
                 return;
             }
 
-            showLoading('topicSubmitBtn');
+            const submitBtn = document.getElementById('topicSubmitBtn');
+            setLoading(submitBtn, true);
 
             try {
+                // ===== FIXED: API expects course_id, content, code_example =====
+                const topicData = {
+                    course_id: courseId,      // ✅ Use course_id (not courseId)
+                    title: title,
+                    content: "",              // ✅ Empty string as required
+                    code_example: null        // ✅ Null as required
+                };
+
                 if (id) {
-                    await updateTopic(id, { title, courseId });
+                    // UPDATE — using topic_id
+                    await updateTopic(parseInt(id), topicData);
                     showToast('success', 'Updated', 'Topic updated successfully');
                 } else {
-                    await createTopic({ title, courseId });
+                    // CREATE
+                    await createTopic(topicData);
                     showToast('success', 'Created', 'Topic created successfully');
                 }
 
+                // Reset and close
                 closeModal('topicModal');
-                this.reset();
+                document.getElementById('topicForm').reset();
                 document.getElementById('topicId').value = '';
                 document.getElementById('topicModalTitle').textContent = '➕ Add New Topic';
                 document.getElementById('topicSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save Topic';
+
+                // Reload
                 loadTopics();
+
             } catch (error) {
-                showError('Failed to save topic: ' + error.message);
+                console.error('Save topic error:', error);
+                const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+                showError('Failed to save topic: ' + errorMsg);
             } finally {
-                hideLoading('topicSubmitBtn');
+                setLoading(submitBtn, false);
             }
         });
 
+        // ========================================
+        // RESET MODAL ON CLOSE
+        // ========================================
         document.querySelector('#topicModal .modal__close').addEventListener('click', function() {
             document.getElementById('topicForm').reset();
             document.getElementById('topicId').value = '';
             document.getElementById('topicModalTitle').textContent = '➕ Add New Topic';
             document.getElementById('topicSubmitBtn').innerHTML = '<i class="fas fa-save"></i> Save Topic';
-            closeModal('topicModal');
         });
 
-        await loadCoursesDropdown();
-        await loadTopics();
+        // ========================================
+        // KEYBOARD SHORTCUTS
+        // ========================================
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const activeModal = document.querySelector('.modal-overlay.active');
+                if (activeModal) {
+                    activeModal.classList.remove('active');
+                }
+            }
+        });
 
+        // ========================================
+        // SIDEBAR ACTIVE STATE
+        // ========================================
         document.querySelectorAll('.sidebar__link').forEach(link => {
             if (link.getAttribute('href') === 'topics.html') {
                 link.classList.add('sidebar__link--active');
             }
         });
 
+        // ========================================
+        // CONSOLE HELPERS
+        // ========================================
+        console.log('🚀 EZLearn — Topics Page v2.2');
+        console.log('📚 Using real topicService API');
+        console.log('📋 API expects: course_id, title, content, code_example');
+        console.log('💡 Keyboard shortcuts: Escape to close modal');
+
+        // ========================================
+        // INIT
+        // ========================================
+        async function init() {
+            await loadCoursesDropdown();
+            await loadTopics();
+        }
+
+        init();
+
+        // Expose functions globally
         window.openModal = openModal;
         window.closeModal = closeModal;
+        window.editTopic = editTopic;
+        window.deleteTopicHandler = deleteTopicHandler;
     </script>
 
 </body>
