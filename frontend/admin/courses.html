@@ -521,9 +521,7 @@
             }, 1500);
         }
 
-        // ========================================
-        // LOGOUT
-        // ========================================
+    
         document.getElementById('logoutBtn').addEventListener('click', function(e) {
             e.preventDefault();
             if (confirm('Are you sure you want to logout?')) {
@@ -533,9 +531,7 @@
             }
         });
 
-        // ========================================
-        // LOAD COURSES — FIXED FOR API STRUCTURE
-        // ========================================
+        
         async function loadCourses() {
             const tbody = document.getElementById('coursesTable');
 
@@ -576,9 +572,7 @@
             }
         }
 
-        // ========================================
-        // EDIT COURSE — FIXED
-        // ========================================
+       
         window.editCourse = async function(courseId) {
             try {
                 const response = await getCourses();
@@ -609,10 +603,6 @@
                 showError('Failed to load course details: ' + (error.message || 'Unknown error'));
             }
         };
-
-        // ========================================
-        // DELETE COURSE — FIXED
-        // ========================================
         window.deleteCourseHandler = async function(courseId) {
             if (!confirm('Delete this course and all its topics & lessons?')) return;
 
@@ -626,9 +616,7 @@
             }
         };
 
-        // ========================================
-        // COURSE FORM SUBMIT — FIXED
-        // ========================================
+     
         document.getElementById('courseForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
@@ -691,10 +679,6 @@
                 setLoading(submitBtn, false);
             }
         });
-
-        // ========================================
-        // RESET MODAL ON CLOSE
-        // ========================================
         document.querySelector('#courseModal .modal__close').addEventListener('click', function() {
             document.getElementById('courseForm').reset();
             document.getElementById('courseId').value = '';
@@ -711,30 +695,19 @@
                 }
             }
         });
-
-        // ========================================
-        // SIDEBAR ACTIVE STATE
-        // ========================================
         document.querySelectorAll('.sidebar__link').forEach(link => {
             if (link.getAttribute('href') === 'courses.html') {
                 link.classList.add('sidebar__link--active');
             }
         });
 
-        // ========================================
-        // CONSOLE HELPERS
-        // ========================================
         console.log('🚀 EZLearn — Courses Page v2.2');
         console.log('📚 Using real courseService API');
         console.log('🔗 Course ID field: course_id');
         console.log('💡 Keyboard shortcuts: Escape to close modal');
 
-        // ========================================
-        // INIT
-        // ========================================
         loadCourses();
 
-        // Expose functions globally
         window.openModal = openModal;
         window.closeModal = closeModal;
         window.editCourse = editCourse;
