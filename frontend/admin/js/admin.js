@@ -1,74 +1,31 @@
-// ========================================
-// EZLearn — Admin Core Functions
-// ========================================
+const toggleBtn = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
 
-// ===== Check Authentication =====
-export function checkAuth() {
-    const token = sessionStorage.getItem('token');
-    if (!token) {
-        window.location.href = '../login.html';
-        return false;
-    }
-    return true;
-}
-
-// ===== Get Current User =====
-export function getCurrentUser() {
-    try {
-        const user = sessionStorage.getItem('user');
-        return user ? JSON.parse(user) : null;
-    } catch {
-        return null;
-    }
-}
-
-// ===== Logout =====
-export function logout() {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    window.location.href = '../login.html';
-}
-
-// ===== Sidebar Active Link =====
-export function setActiveLink() {
-    const current = window.location.pathname.split('/').pop();
-    document.querySelectorAll('.sidebar__link').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === current) {
-            link.classList.add('sidebar__link--active');
+        function toggleSidebar() {
+            sidebar.classList.toggle('sidebar--open');
+            overlay.classList.toggle('sidebar-overlay--active');
+            document.body.style.overflow = sidebar.classList.contains('sidebar--open') ? 'hidden' : '';
         }
-    });
-}
 
-// ===== Render Stats =====
-export function renderStats(data) {
-    const statsMap = {
-        totalCourses: { icon: 'fa-book', label: 'Courses' },
-        totalTopics: { icon: 'fa-list', label: 'Topics' },
-        totalLessons: { icon: 'fa-file-alt', label: 'Lessons' },
-        totalUsers: { icon: 'fa-users', label: 'Users' },
-        totalFeedbacks: { icon: 'fa-comment', label: 'Feedbacks' }
-    };
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', toggleSidebar);
+        }
 
-    const container = document.getElementById('statsGrid');
-    if (!container) return;
+        if (overlay) {
+            overlay.addEventListener('click', toggleSidebar);
+        }
 
-    container.innerHTML = Object.entries(statsMap).map(([key, value]) => `
-        <div class="stat">
-            <span class="stat__icon"><i class="fas ${value.icon}"></i></span>
-            <div class="stat__value">${data[key] || 0}</div>
-            <div class="stat__label">${value.label}</div>
-        </div>
-    `).join('');
-}
+        // Close sidebar on Escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar--open')) {
+                toggleSidebar();
+            }
+        });
 
-// ======================================== */
-// EXPORTS                                  */
-// ======================================== */
-export default {
-    checkAuth,
-    getCurrentUser,
-    logout,
-    setActiveLink,
-    renderStats
-};
+        // Auto-close on resize to desktop
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && sidebar.classList.contains('sidebar--open')) {
+                toggleSidebar();
+            }
+        });
